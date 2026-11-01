@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas-pro';
 import { Member, OrgSettings, LedgerEntry } from '../types';
 import { money, toBn, formatBnDate, formatMobile, generateLedger, formatMonthBn } from '../utils';
 
