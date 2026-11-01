@@ -1,0 +1,2419 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>সপ্তদশ সহযাত্রা - সঞ্চয় ব্যবস্থাপনা</title>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- ফায়ারবেস SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyDj_neKSouBkrdq6bHSni0E0LrTX1YkWwE",
+      authDomain: "shoptodash.firebaseapp.com",
+      projectId: "shoptodash",
+      storageBucket: "shoptodash.firebasestorage.app",
+      messagingSenderId: "857362333061",
+      appId: "1:857362333061:web:ff2f23b0ee313d194dd8ec"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       প্রিমিয়াম লাইট থিম — সপ্তদশ সহযাত্রা
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0; padding: 0;
+      background: #F4F7FB;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Tiro Bangla', 'Poppins', serif;
+    }
+
+    #ssa-root {
+      /* ── Color Tokens (Navy / White admin theme) ── */
+      --bg:          #F4F7FB;
+      --bg2:         #EAF1F9;
+      --bg3:         #F5F8FC;
+      --card:        #FFFFFF;
+      --card-solid:  #FFFFFF;
+      --line:        rgba(20,63,110,0.12);
+      --glass-border:rgba(20,63,110,0.10);
+
+      --ink:         #12233B;
+      --ink-soft:    #55688A;
+      --ink-muted:   #93A3BE;
+
+      --primary:        #1D63AD;    /* core navy blue */
+      --primary-glow:   rgba(29,99,173,0.30);
+      --primary-deep:   #123A66;    /* deep navy */
+      --primary-bright: #2F80D8;    /* brighter blue for highlights */
+
+      --sidebar-top:  #1B5EA0;
+      --sidebar-bot:  #0F3562;
+
+      --accent:      #12B886;       /* teal/green accent */
+      --accent-soft: rgba(18,184,134,0.15);
+
+      --gold:        #F39C12;       /* amber/orange */
+      --gold-soft:   rgba(243,156,18,0.15);
+      --gold-ink:    #C9740A;
+
+      --purple:      #8B5CF6;
+      --purple-soft: rgba(139,92,246,0.15);
+
+      --danger:      #E5484D;
+      --danger-soft: rgba(229,72,77,0.13);
+
+      --success:     #12B886;
+
+      --glass-shadow: 0 20px 50px -22px rgba(15,53,98,0.20);
+
+      font-family: 'Tiro Bangla', 'Poppins', serif;
+      font-size: 17.5px;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--bg);
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .ssa-en { font-family: 'Poppins', sans-serif; }
+    #ssa-root h1,#ssa-root h2,#ssa-root h3 { font-family: 'Tiro Bangla','Poppins',serif; }
+    #ssa-root button, #ssa-root input, #ssa-root select, #ssa-root textarea { font-family: inherit; }
+    #ssa-root button { cursor: pointer; }
+
+    /* ── Background glow orbs ── */
+    body::before {
+      content:'';
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background:
+        radial-gradient(ellipse 60% 50% at 15% 0%,   rgba(29,99,173,.14), transparent),
+        radial-gradient(ellipse 50% 40% at 85% 100%,  rgba(18,184,134,.10), transparent),
+        radial-gradient(ellipse 40% 35% at 50% 50%,   rgba(29,99,173,.04), transparent);
+    }
+
+    /* ══════════════════════════════════════════
+       LOGIN
+    ══════════════════════════════════════════ */
+    .ssa-login-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .ssa-login-card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--card);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 44px 38px 38px;
+      text-align: center;
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      box-shadow: var(--glass-shadow), 0 0 0 1px rgba(29,99,173,.1);
+    }
+    .ssa-seal { width: 80px; height: 80px; margin: 0 auto 16px; }
+    .ssa-login-card h1 {
+      font-size: 26px; margin: 0 0 4px;
+      background: linear-gradient(135deg, #2F80D8 0%, #1D63AD 50%, #12B886 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .ssa-login-sub { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 28px; }
+
+    .ssa-field { text-align: left; margin-bottom: 16px; }
+    .ssa-field label { display: block; font-size: 14.5px; color: var(--ink-soft); margin-bottom: 7px; font-weight: 500; }
+    .ssa-field input,
+    .ssa-field textarea,
+    .ssa-field select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 16.5px;
+      background: var(--bg3);
+      color: var(--ink);
+      transition: border .2s, background .2s;
+    }
+    .ssa-field input:focus,
+    .ssa-field textarea:focus,
+    .ssa-field select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: rgba(29,99,173,.08);
+    }
+    .ssa-field select option { background: #FFFFFF; color: var(--ink); }
+
+    .ssa-login-btn {
+      width: 100%; padding: 13px;
+      border: none; border-radius: 12px; margin-top: 8px;
+      background: linear-gradient(135deg, #2F80D8 0%, #1D63AD 50%, #123A66 100%);
+      color: #fff; font-weight: 700; font-size: 18px;
+      letter-spacing: .03em;
+      box-shadow: 0 8px 24px -6px rgba(29,99,173,.6);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .ssa-login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px -8px rgba(29,99,173,.75);
+    }
+    .ssa-login-error { color: var(--danger); font-size: 14.5px; margin-top: 14px; min-height: 16px; }
+
+    /* ══════════════════════════════════════════
+       APP SHELL
+    ══════════════════════════════════════════ */
+    .ssa-app { display: none; flex: 1; flex-direction: column; height: 100vh; overflow: hidden; position: relative; z-index: 1; }
+    .ssa-shell { display: flex; flex: 1; height: 100vh; overflow: hidden; }
+
+    /* ── Sidebar ── */
+    .ssa-sidebar {
+      width: 254px;
+      flex-shrink: 0;
+      background: linear-gradient(190deg, var(--sidebar-top) 0%, var(--sidebar-bot) 100%);
+      padding: 22px 14px;
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+      position: relative;
+      box-shadow: 4px 0 24px -8px rgba(15,53,98,.35);
+    }
+    .ssa-sidebar::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 220px;
+      pointer-events: none;
+      background: radial-gradient(ellipse 80% 60% at 40% 0%, rgba(255,255,255,.10), transparent);
+    }
+    .ssa-brand {
+      display: flex; align-items: center; gap: 11px;
+      margin-bottom: 30px; padding: 4px 8px 18px;
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,.14);
+    }
+    .ssa-brand svg { width: 34px; height: 34px; flex-shrink: 0; }
+    .ssa-brand-text {
+      font-size: 17px; line-height: 1.3; font-weight: 700;
+      color: #FFFFFF;
+    }
+    .ssa-brand-sub { font-size: 12px; color: rgba(255,255,255,.62); font-weight: 500; margin-top: 1px; }
+
+    .ssa-nav { display: flex; flex-direction: column; gap: 4px; position: relative; }
+    .ssa-nav button {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%; text-align: left;
+      padding: 11px 14px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,.72);
+      border-radius: 10px;
+      font-size: 15.5px;
+      transition: all .2s;
+      position: relative;
+    }
+    .ssa-nav button svg { width: 19px; height: 19px; flex-shrink: 0; opacity: .9; }
+    .ssa-nav button:hover { background: rgba(255,255,255,.08); color: #fff; }
+    .ssa-nav button.active {
+      background: rgba(255,255,255,.16);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+    }
+
+    .ssa-user-info {
+      margin-top: auto;
+      font-size: 14px;
+      color: rgba(255,255,255,.55);
+      padding: 14px 10px 10px;
+      border-top: 1px solid rgba(255,255,255,.14);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ssa-user-info .ssa-user-avatar {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(255,255,255,.16);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 14px;
+    }
+    .ssa-user-info strong { display: block; color: #fff; font-weight: 600; margin-bottom: 1px; font-size: 14.5px; }
+
+    .ssa-logout {
+      background: rgba(229,72,77,.16);
+      border: 1px solid rgba(229,72,77,.30);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 14.5px;
+      color: #FFD7D9;
+      font-weight: 600;
+      transition: all .2s;
+      position: relative;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .ssa-logout svg { width: 16px; height: 16px; }
+    .ssa-logout:hover { background: rgba(229,72,77,.26); }
+
+    /* ── Main Content ── */
+    .ssa-main {
+      flex: 1;
+      padding: 28px 32px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background:
+        radial-gradient(ellipse 50% 40% at 80% 10%, rgba(29,99,173,.05), transparent),
+        var(--bg);
+      height: 100%;
+    }
+    .ssa-page-title { font-size: 29px; color: var(--ink); margin: 0 0 4px; font-weight: 700; }
+    .ssa-page-sub { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 24px; }
+
+    /* ── Stat Cards ── */
+    .ssa-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 28px; }
+    .ssa-stat {
+      background: var(--card);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px -10px rgba(15,53,98,0.12);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .ssa-stat:hover { transform: translateY(-2px); box-shadow: 0 10px 28px -10px rgba(15,53,98,0.18); }
+    .ssa-stat-icon {
+      width: 42px; height: 42px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--primary-glow);
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+    .ssa-stat-icon svg { width: 21px; height: 21px; }
+    .ssa-stat.warn .ssa-stat-icon { background: var(--danger-soft); color: var(--danger); }
+    .ssa-stat-label { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 6px; font-weight: 500; position: relative; z-index: 1; }
+    .ssa-stat-value {
+      font-size: 24px; font-weight: 700; color: var(--ink);
+      font-family: 'Tiro Bangla','Poppins',serif;
+      position: relative; z-index: 1;
+    }
+    .ssa-stat.warn .ssa-stat-value { color: var(--danger); }
+
+    /* ── Buttons ── */
+    .ssa-btn {
+      border: none; border-radius: 10px; padding: 10px 18px;
+      font-size: 16px; font-weight: 600; cursor: pointer;
+      transition: all .2s;
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    }
+    .ssa-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .ssa-btn-primary {
+      background: linear-gradient(135deg, #2F80D8, #1D63AD);
+      color: #fff;
+      box-shadow: 0 4px 14px -4px rgba(29,99,173,.6);
+    }
+    .ssa-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px -4px rgba(29,99,173,.7); }
+    .ssa-btn-ghost {
+      background: var(--bg3);
+      border: 1px solid var(--line);
+      color: var(--ink-soft);
+    }
+    .ssa-btn-ghost:hover { background: rgba(29,99,173,.08); color: var(--ink); }
+    .ssa-btn-gold {
+      background: var(--gold-soft);
+      color: var(--gold-ink);
+      border: 1px solid rgba(243,156,18,.25);
+    }
+    .ssa-btn-gold:hover { background: rgba(243,156,18,.25); }
+    .ssa-btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border: 1px solid rgba(229,72,77,.2);
+    }
+    .ssa-btn-danger:hover { background: rgba(229,72,77,.22); }
+    .ssa-btn-sm { padding: 6px 12px; font-size: 14.5px; border-radius: 8px; }
+    .ssa-btn-clickable-pill { cursor: pointer; border: none; font-family: inherit; transition: all .2s; }
+    .ssa-btn-clickable-pill:hover { transform: scale(1.05); }
+
+    /* ── Toolbar & Search ── */
+    .ssa-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .ssa-search { flex: 1; min-width: 220px; position: relative; }
+    .ssa-search input {
+      width: 100%; padding: 10px 14px 10px 40px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 16.5px;
+      background: var(--bg3);
+      color: var(--ink);
+      transition: border .2s;
+    }
+    .ssa-search::before {
+      content: '';
+      position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+      width: 16px; height: 16px; pointer-events: none; opacity: .5;
+      background: var(--ink-soft);
+      -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>') center/contain no-repeat;
+      mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>') center/contain no-repeat;
+    }
+    .ssa-search input:focus { outline: none; border-color: var(--primary); }
+
+    /* ── Table ── */
+    .ssa-table-wrap {
+      background: var(--card);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    table.ssa-table { width: 100%; min-width: 800px; border-collapse: collapse; font-size: 16px; }
+    table.ssa-table th {
+      text-align: left;
+      background: rgba(29,99,173,.10);
+      color: var(--primary-deep);
+      font-weight: 600;
+      padding: 13px 16px;
+      font-size: 14.5px;
+      white-space: nowrap;
+      border-bottom: 1px solid var(--line);
+      letter-spacing: .02em;
+    }
+    table.ssa-table td {
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      vertical-align: middle;
+      color: var(--ink);
+    }
+    table.ssa-table tr:hover td { background: rgba(29,99,173,.05); }
+
+    .ssa-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      object-fit: cover;
+      background: var(--bg3);
+      border: 2px solid var(--line);
+    }
+    .ssa-pill { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+    .ssa-pill.gold { background: var(--gold-soft); color: var(--gold-ink); border: 1px solid rgba(243,156,18,.2); }
+    .ssa-pill.brick { background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(229,72,77,.2); }
+    .ssa-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* ── Modals ── */
+    .ssa-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.70);
+      z-index: 9999;
+      align-items: center; justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .ssa-modal {
+      background: #FFFFFF;
+      border: 1px solid var(--glass-border);
+      width: 100%; max-width: 480px;
+      border-radius: 20px;
+      padding: 32px;
+      max-height: 90vh;
+      overflow: auto;
+      box-shadow: 0 30px 80px -20px rgba(31,41,102,0.22), 0 0 0 1px rgba(29,99,173,.10);
+    }
+    .ssa-modal h3 {
+      margin: 0 0 22px;
+      font-size: 21px;
+      background: linear-gradient(135deg, #2F80D8, #123A66);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .ssa-modal .ssa-field { margin-bottom: 14px; }
+    .ssa-modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 26px; }
+    .ssa-fine-note {
+      font-size: 15px; color: var(--danger); margin-top: 8px; display: none;
+      background: var(--danger-soft); padding: 8px 12px; border-radius: 8px;
+    }
+    .ssa-stmt-modal { max-width: 900px; }
+
+    /* ── Custom Alert/Confirm ── */
+    .ssa-dialog-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.75);
+      z-index: 10000;
+      align-items: center; justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+    .ssa-dialog {
+      background: #FFFFFF;
+      border: 1px solid var(--glass-border);
+      width: 100%; max-width: 380px;
+      border-radius: 20px;
+      padding: 28px;
+      text-align: center;
+      box-shadow: 0 30px 80px -20px rgba(31,41,102,0.22);
+    }
+    .ssa-dialog p { margin: 0 0 24px; font-size: 17px; color: var(--ink); line-height: 1.6; }
+    .ssa-dialog .ssa-modal-actions { justify-content: center; margin-top: 0; }
+
+    /* ── Pagination ── */
+    .ssa-pagination { display: flex; justify-content: center; gap: 8px; margin-top: 24px; flex-wrap: wrap; }
+    .ssa-page-btn {
+      padding: 8px 15px; border-radius: 9px; cursor: pointer;
+      font-weight: 500; font-family: inherit; font-size: 15px;
+      border: 1px solid var(--line);
+      background: var(--bg3);
+      color: var(--ink-soft);
+      transition: all .2s;
+    }
+    .ssa-page-btn:hover { background: rgba(29,99,173,.12); color: var(--ink); border-color: var(--primary); }
+    .ssa-page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* ── Photo Upload ── */
+    .ssa-photo-upload { display: flex; align-items: center; gap: 16px; }
+    .ssa-photo-preview {
+      width: 72px; height: 72px; border-radius: 50%;
+      object-fit: cover; flex-shrink: 0;
+      background: var(--bg3);
+      border: 2px solid var(--line);
+      display: none;
+    }
+    .ssa-photo-upload-controls { flex: 1; min-width: 0; }
+    .ssa-photo-upload-controls input[type="file"] {
+      width: 100%; font-size: 14.5px; color: var(--ink-soft);
+      padding: 10px 12px;
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      background: var(--bg3);
+      cursor: pointer;
+    }
+    .ssa-photo-status { font-size: 14px; margin-top: 8px; min-height: 15px; }
+
+    /* ── Loading/Empty ── */
+    .ssa-empty { text-align: center; padding: 60px 20px; color: var(--ink-soft); font-size: 17px; }
+    .ssa-empty svg { width: 34px; height: 34px; display: block; margin: 0 auto 10px; color: var(--accent); }
+    .ssa-loading { text-align: center; padding: 60px; color: var(--ink-soft); font-size: 17px; }
+
+    #ssa-print-zone { position: fixed; left: -9999px; top: 0; }
+
+    /* ══════════════════════════════════════════
+       ID CARD — Landscape, Driving-License style
+    ══════════════════════════════════════════ */
+    .ssa-idcard-tpl {
+      width: 560px; height: 348px;
+      background: #FDFEFF;
+      border-radius: 18px;
+      font-family: 'Tiro Bangla','Poppins',serif;
+      overflow: hidden;
+      position: relative;
+      display: flex; flex-direction: column;
+      border: 1px solid rgba(18,58,102,.14);
+      box-shadow: 0 26px 54px -22px rgba(15,53,98,.45);
+    }
+    /* faint security watermark pattern behind everything */
+    .ssa-idcard-tpl::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-image: radial-gradient(rgba(29,99,173,.05) 1.4px, transparent 1.4px);
+      background-size: 13px 13px;
+    }
+    .ssa-idcard-tpl::after {
+      content: '';
+      position: absolute; right: -60px; bottom: -60px; z-index: 0; pointer-events: none;
+      width: 240px; height: 240px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(29,99,173,.06), transparent 70%);
+    }
+
+    .idcard-header {
+      position: relative; z-index: 1; flex-shrink: 0;
+      height: 62px;
+      background: linear-gradient(115deg, #1D63AD 0%, #123A66 100%);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 22px;
+    }
+    .idcard-header-left { display: flex; align-items: center; gap: 11px; min-width: 0; }
+    .idcard-header-left svg { width: 32px; height: 32px; flex-shrink: 0; }
+    .idcard-org { color: #fff; font-weight: 700; font-size: 16.5px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .idcard-org-sub { color: rgba(255,255,255,.72); font-size: 10.5px; margin-top: 1px; }
+    .idcard-header-right { text-align: right; flex-shrink: 0; padding-left: 10px; }
+    .idcard-card-type { color: #fff; font-weight: 700; font-size: 12.5px; letter-spacing: .03em; }
+    .idcard-card-type-en { color: rgba(255,255,255,.68); font-size: 9px; letter-spacing: .14em; font-family: 'Poppins', sans-serif; margin-top: 1px; }
+
+    .idcard-body-land { position: relative; z-index: 1; flex: 1; display: flex; gap: 22px; padding: 20px 24px 10px; }
+
+    .idcard-photo-col { flex-shrink: 0; width: 118px; display: flex; flex-direction: column; align-items: center; }
+    .idcard-photo-frame {
+      width: 112px; height: 132px; border-radius: 10px;
+      padding: 3px; background: linear-gradient(135deg, #1D63AD, #123A66);
+      box-shadow: 0 8px 18px -6px rgba(15,53,98,.4);
+    }
+    .idcard-photo { width: 100%; height: 100%; border-radius: 7px; object-fit: cover; background: #EAF1F9; display: block; }
+    .idcard-memberno-chip {
+      margin-top: 9px; background: var(--gold); color: #fff;
+      font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px;
+      letter-spacing: .02em; font-family: 'Poppins', sans-serif; white-space: nowrap;
+    }
+
+    .idcard-info-col { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+    .idcard-name-land { font-size: 21px; font-weight: 700; color: #12233B; line-height: 1.2; }
+    .idcard-name-sub { font-size: 11px; color: #1D63AD; font-weight: 600; letter-spacing: .05em; margin-top: 2px; margin-bottom: 14px; text-transform: uppercase; font-family: 'Poppins', sans-serif; }
+    .idcard-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 13px 20px; }
+    .idcard-field .k { font-size: 9.5px; color: #8CA0BC; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; margin-bottom: 3px; font-family: 'Poppins', sans-serif; }
+    .idcard-field .v { font-size: 15px; font-weight: 700; color: #12233B; }
+
+    .idcard-footer-land {
+      position: relative; z-index: 1; flex-shrink: 0;
+      height: 44px; background: #EEF4FA;
+      border-top: 1px dashed rgba(18,58,102,.20);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+    }
+    .idcard-issue { font-size: 10px; color: #55688A; }
+    .idcard-barcode {
+      width: 128px; height: 22px;
+      background: repeating-linear-gradient(90deg, #12233B 0 2px, transparent 2px 5px);
+      opacity: .82;
+    }
+
+    /* ── PDF Statement ── */
+    .ssa-stmt-tpl { width: 794px; min-height: 1123px; background: #fff; padding: 60px 56px; font-family: 'Tiro Bangla','Poppins',serif; color: #111; }
+    .ssa-stmt-head { display: flex; align-items: center; gap: 16px; border-bottom: 3px solid #1D63AD; padding-bottom: 18px; margin-bottom: 22px; }
+    .ssa-stmt-head svg { width: 52px; height: 52px; }
+    .ssa-stmt-head .t1 { font-size: 25.5px; color: #123A66; font-weight: 700; }
+    .ssa-stmt-head .t2 { font-size: 14.5px; color: #666; }
+    .ssa-stmt-title { font-size: 19.5px; margin: 18px 0 6px; color: #123A66; font-weight: 700; }
+    .ssa-stmt-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; font-size: 15.5px; margin-bottom: 22px; color: #333; }
+    .ssa-stmt-meta .k { color: #666; }
+    table.ssa-stmt-table { width: 100%; border-collapse: collapse; font-size: 15px; color: #333; }
+    table.ssa-stmt-table th { background: #E7F0FA; color: #123A66; text-align: left; padding: 9px 12px; border: 1px solid #CFE0F0; font-weight: 600; }
+    table.ssa-stmt-table td { padding: 8px 12px; border: 1px solid #CFE0F0; }
+    .ssa-stmt-summary { margin-top: 18px; margin-left: auto; width: 280px; font-size: 15.5px; color: #333; }
+    .ssa-stmt-summary div { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #CFE0F0; }
+    .ssa-stmt-summary .total { font-weight: 700; color: #123A66; font-size: 17px; border-bottom: none; }
+    .ssa-stmt-foot { margin-top: 40px; font-size: 12.5px; color: #888; text-align: center; }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE — TABLET
+    ══════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .ssa-main { padding: 22px 20px; }
+      .ssa-sidebar { width: 210px; }
+    }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE — MOBILE (≤ 768px)
+    ══════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      body { height: 100dvh; overflow: hidden; }
+      #ssa-root { flex-direction: column; height: 100dvh; overflow: hidden; font-size: 15px; }
+      .ssa-shell { flex-direction: column; height: 100%; flex: 1; }
+
+      /* Top Header Bar */
+      .ssa-sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 16px;
+        flex-shrink: 0;
+        background: linear-gradient(100deg, var(--sidebar-top), var(--sidebar-bot)) !important;
+        border-bottom: none;
+        box-shadow: 0 4px 16px -8px rgba(15,53,98,.35);
+      }
+      .ssa-sidebar::before { display: none; }
+      .ssa-brand { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+      .ssa-brand-text { font-size: 15px; }
+      .ssa-user-info { display: none; }
+
+      /* Bottom Nav Bar */
+      .ssa-nav {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        display: flex; flex-direction: row;
+        justify-content: space-around;
+        padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+        z-index: 1000;
+        border-top: 1px solid var(--line);
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 -8px 32px -8px rgba(31,41,102,0.14);
+        margin: 0;
+      }
+      .ssa-nav button {
+        flex-direction: column; gap: 3px;
+        padding: 6px 4px; margin: 0;
+        width: auto; flex: 1;
+        text-align: center; justify-content: center;
+        color: var(--ink-muted);
+        border-radius: 10px; font-size: 20px;
+        border-left: none !important;
+      }
+      .ssa-nav button span { display: block; font-size: 10.5px; margin-top: 3px; font-weight: 600; }
+      .ssa-nav button.active {
+        background: rgba(29,99,173,.15);
+        color: var(--primary);
+      }
+
+      /* Logout button in top bar */
+      .ssa-logout {
+        margin-top: 0;
+        padding: 6px 12px;
+        font-size: 13px;
+      }
+
+      /* Main content */
+      .ssa-main {
+        padding: 16px 14px 110px 14px;
+        overflow-y: auto;
+        flex: 1;
+      }
+      .ssa-page-title { font-size: 22px; }
+      .ssa-page-sub { font-size: 13.5px; margin-bottom: 16px; }
+
+      /* Stats grid */
+      .ssa-stats { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
+      .ssa-stat { padding: 16px 14px; border-radius: 14px; }
+      .ssa-stat-value { font-size: 20px; }
+      .ssa-stat-label { font-size: 12px; }
+
+      /* Toolbar */
+      .ssa-toolbar { flex-direction: column; align-items: stretch; gap: 10px; }
+      .ssa-search { width: 100%; min-width: 0; }
+      .ssa-toolbar .ssa-btn { width: 100%; justify-content: center; }
+
+      /* Table */
+      .ssa-table-wrap { border-radius: 12px; }
+
+      /* Modal */
+      .ssa-modal {
+        padding: 22px 18px;
+        max-width: 100%;
+        border-radius: 20px;
+        margin: 0;
+        max-height: 90dvh;
+      }
+      .ssa-modal h3 { font-size: 18px; margin-bottom: 16px; }
+      .ssa-modal-actions { flex-direction: column-reverse; gap: 10px; }
+      .ssa-modal-actions .ssa-btn { width: 100%; justify-content: center; }
+
+      /* ID card scales to fit narrow screens */
+      #ssa-profile-card-holder { transform: scale(0.72); transform-origin: top center; margin-bottom: -90px; }
+    }
+
+    @media (max-width: 480px) {
+      .ssa-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .ssa-stat-value { font-size: 18px; }
+      table.ssa-table th, table.ssa-table td { padding: 10px 10px; font-size: 13.5px; }
+      .ssa-actions { gap: 5px; }
+      .ssa-btn-sm { padding: 5px 9px; font-size: 12.5px; }
+      #ssa-profile-card-holder { transform: scale(0.58); margin-bottom: -146px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="ssa-root"></div>
+
+<script>
+(function () {
+  // ============== CONFIG ==============
+  var ORG_NAME = 'সপ্তদশ সহযাত্রা';
+  var ORG_SUB  = 'সঞ্চয় ব্যবস্থাপনা';
+  var ITEMS_PER_PAGE = 10;
+
+  // ============== ICON SET (line icons, replace emoji) ==============
+  var ICON = {
+    dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg>',
+    members:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
+    due:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg>',
+    users:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>',
+    eye:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>',
+    pdf:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M9 15h6"></path><path d="M9 18h4"></path></svg>',
+    mail:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 6l-10 7L2 6"></path></svg>',
+    search:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>',
+    check:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>',
+    wallet:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"></path><path d="M16 12h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a2 2 0 0 1 0-4z"></path></svg>',
+    receipt:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2h16v20l-3-2-2 2-2-2-2 2-2-2-2 2-3-2z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg>',
+    alert:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>',
+    logout:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>',
+    celebrate: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.8 11.3L2 22l10.7-3.79"></path><path d="M4 3h.01M22 8h.01M15 2h.01M22 20h.01"></path><path d="M22 2L2 22"></path></svg>',
+    phone:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>',
+    idcard:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2.5"></rect><circle cx="8" cy="11" r="2.4"></circle><path d="M4.5 17c.6-2 2-3 3.5-3s2.9 1 3.5 3"></path><path d="M14.5 9h5M14.5 12.5h5M14.5 16h3.5"></path></svg>'
+  };
+  // Firebase দিয়ে ডাটা পরিচালনা করা হচ্ছে (নিচে ফায়ারবেস init ব্লক দেখুন)
+  var db = firebase.firestore();
+  var auth = firebase.auth();
+  var authReady = new Promise(function (resolve) {
+    auth.onAuthStateChanged(function (user) {
+      if (user) { resolve(user); return; }
+      auth.signInAnonymously().catch(function (e) {
+        console.error('Firebase Auth ব্যর্থ:', e);
+        resolve(null);
+      });
+    });
+  });
+  // ================================================================
+
+  var root = document.getElementById('ssa-root');
+  
+  var state = { 
+    members: [], dashboard: null, dueMembers: [], users: [], 
+    page: 'dashboard', currentMemberId: null, auth: null, 
+    pendingPhotoDataUrl: null, editingOriginalMemberNo: null,
+    editingMemberPhotoDataUrl: '',
+    pagination: { members: 1, due: 1, dashDue: 1 } 
+  };
+
+  function isAdmin() { return state.auth && state.auth.role === 'Admin'; }
+  
+  function toWhatsAppNumber(mobile) {
+    var digits = String(mobile || '').replace(/\D/g, '');
+    if (!digits) return null;
+    if (digits.indexOf('880') === 0) return digits;
+    if (digits.indexOf('0') === 0) return '88' + digits;
+    return '880' + digits;
+  }
+  function whatsappLink(m, message) {
+    var num = toWhatsAppNumber(m.Mobile);
+    if (!num) return null;
+    return 'https://wa.me/' + num + '?text=' + encodeURIComponent(message);
+  }
+
+  var SEAL_SVG = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
+    '<defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2F80D8"/><stop offset="100%" style="stop-color:#12B886"/></linearGradient></defs>' +
+    '<circle cx="50" cy="50" r="47" fill="none" stroke="url(#sg)" stroke-width="2.5"/>' +
+    '<circle cx="50" cy="50" r="39" fill="none" stroke="url(#sg)" stroke-width="1"/>' +
+    '<circle cx="50" cy="50" r="34" fill="rgba(29,99,173,0.15)"/>' +
+    '<text x="50" y="59" text-anchor="middle" font-family="Tiro Bangla, serif" font-size="30" fill="#2F80D8">সস</text>' +
+    '</svg>';
+    
+  var FALLBACK_AVATAR = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%236C63FF%22%3E%3Cpath%20d%3D%22M12%2012c2.21%200%204-1.79%204-4s-1.79-4-4-4-4%201.79-4%204%201.79%204%204%204zm0%202c-2.67%200-8%201.34-8%204v2h16v-2c0-2.66-5.33-4-8-4z%22%2F%3E%3C%2Fsvg%3E';
+
+  function esc(s){ return (s===undefined||s===null) ? '' : String(s); }
+  function money(n){ return Number(n||0).toLocaleString('bn-BD'); }
+  function bnDate(d){
+    if(!d) return '—';
+    var dt = new Date(d);
+    if (isNaN(dt)) return esc(d);
+    return dt.toLocaleDateString('bn-BD', {year:'numeric', month:'long', day:'numeric'});
+  }
+  function bnMonthYear(d){
+    var dt = d ? new Date(d) : new Date();
+    return dt.toLocaleDateString('bn-BD', {year:'numeric', month:'long'});
+  }
+  function formatMonthBn(yyyyMm) {
+    if(!yyyyMm) return '';
+    var parts = yyyyMm.split('-');
+    var d = new Date(parts[0], parseInt(parts[1])-1, 1);
+    return d.toLocaleDateString('bn-BD', {year:'numeric', month:'long'});
+  }
+  function formatMobile(mobile){
+    var digits = String(mobile || '').replace(/\D/g, '');
+    if (!digits) return '';
+    if (digits.indexOf('880') === 0) digits = digits.substring(3);
+    if (digits.indexOf('0') !== 0) digits = '0' + digits;
+    return digits;
+  }
+
+  function waitForImages(container){
+    var imgs = container.querySelectorAll('img');
+    var promises = [];
+    imgs.forEach(function (img) {
+      if (img.complete) return;
+      promises.push(new Promise(function (resolve) {
+        img.addEventListener('load', resolve);
+        img.addEventListener('error', resolve);
+      }));
+    });
+    return Promise.all(promises);
+  }
+
+  function getMemberPhoto(m){
+    if (!m) return '';
+    // Firestore-এ সংরক্ষিত ছবি (সব ডিভাইস থেকে দেখা যাবে)
+    return m.Photo || '';
+  }
+  
+  function getAvatarHtml(photoSrc) {
+    if (!photoSrc) {
+        return '<img class="ssa-avatar" style="padding:5px;" src="' + FALLBACK_AVATAR + '" alt="">';
+    }
+    return '<img class="ssa-avatar" src="' + esc(photoSrc) + '" onerror="this.onerror=null;this.src=\'' + FALLBACK_AVATAR + '\';this.style.padding=\'5px\';" alt="">';
+  }
+  
+  function showAlert(msg) {
+    document.getElementById('ssa-alert-msg').textContent = msg;
+    document.getElementById('ssa-alert-overlay').style.display = 'flex';
+  }
+  
+  function showConfirm(msg, onConfirm) {
+    document.getElementById('ssa-confirm-msg').textContent = msg;
+    document.getElementById('ssa-confirm-overlay').style.display = 'flex';
+    var confirmBtn = document.getElementById('ssa-btn-confirm-yes');
+    var newBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+    newBtn.addEventListener('click', function() {
+        document.getElementById('ssa-confirm-overlay').style.display = 'none';
+        if(onConfirm) onConfirm();
+    });
+  }
+
+  // ============== Firebase Firestore ব্যাকএন্ড ==============
+  function api(action, payload) {
+    payload = payload || {};
+    return authReady.then(function () {
+      switch (action) {
+        case 'login':          return fsLogin(payload);
+        case 'getMembers':     return fsGetMembers();
+        case 'getPayments':    return fsGetPayments(payload.memberId);
+        case 'addMember':      return fsAddMember(payload.member);
+        case 'updateMember':   return fsUpdateMember(payload.member);
+        case 'deleteMember':   return fsDeleteMember(payload.id);
+        case 'addPayment':     return fsAddPayment(payload.payment);
+        case 'updatePayment':  return fsUpdatePayment(payload.payment);
+        case 'deletePayment':  return fsDeletePayment(payload.paymentId);
+        case 'getUsers':       return fsGetUsers();
+        case 'addUser':        return fsAddUser(payload.user);
+        case 'updateUser':     return fsUpdateUser(payload.user);
+        case 'deleteUser':     return fsDeleteUser(payload.username);
+        case 'sendReportEmail':return fsSendReportEmail(payload);
+        default: return { success: false, message: 'অজানা রিকোয়েস্ট!' };
+      }
+    }).catch(function (err) {
+      return { success: false, message: 'ডাটাবেস এরর: ' + (err && err.message ? err.message : err) };
+    });
+  }
+
+  function fsLogin(p) {
+    return db.collection('users').doc(String(p.username || '')).get().then(function (doc) {
+      if (!doc.exists) return { success: false, message: 'ভুল ইউজারনেম বা পাসওয়ার্ড' };
+      var d = doc.data();
+      if (String(d.password) !== String(p.password)) return { success: false, message: 'ভুল ইউজারনেম বা পাসওয়ার্ড' };
+      return { success: true, username: doc.id, name: d.name, role: d.role, message: 'Login Successful' };
+    });
+  }
+
+  function fsGetMembers() {
+    return db.collection('members').get().then(function (snap) {
+      var arr = [];
+      snap.forEach(function (doc) {
+        var d = doc.data();
+        arr.push({
+          ID: doc.id, Name: d.name, MemberNo: d.member_no, Mobile: d.mobile,
+          InstallmentAmount: d.installment_amount, DueDay: d.due_day, FineAmount: d.fine_amount,
+          Photo: d.photo || ''
+        });
+      });
+      return { success: true, data: arr };
+    });
+  }
+
+  function fsGetPayments(memberId) {
+    return db.collection('payments').where('member_id', '==', String(memberId)).get().then(function (snap) {
+      var arr = [];
+      snap.forEach(function (doc) {
+        var d = doc.data();
+        arr.push({ ID: doc.id, Amount: d.amount, Date: d.date, Fine: d.fine, Note: d.note });
+      });
+      arr.sort(function (a, b) { return new Date(b.Date) - new Date(a.Date); });
+      return { success: true, data: arr };
+    });
+  }
+
+  function fsAddMember(m) {
+    return db.collection('members').add({
+      name: m.Name, member_no: m.MemberNo, mobile: m.Mobile,
+      installment_amount: Number(m.InstallmentAmount || 0),
+      due_day: Number(m.DueDay || 0), fine_amount: Number(m.FineAmount || 0),
+      photo: m.Photo || ''
+    }).then(function () { return { success: true }; });
+  }
+
+  function fsUpdateMember(m) {
+    var data = {
+      name: m.Name, member_no: m.MemberNo, mobile: m.Mobile,
+      installment_amount: Number(m.InstallmentAmount || 0),
+      due_day: Number(m.DueDay || 0), fine_amount: Number(m.FineAmount || 0)
+    };
+    if (m.Photo !== undefined) data.photo = m.Photo;
+    return db.collection('members').doc(String(m.ID)).set(data, { merge: true }).then(function () { return { success: true }; });
+  }
+
+  function fsDeleteMember(id) {
+    return db.collection('members').doc(String(id)).delete().then(function () { return { success: true }; });
+  }
+
+  function fsAddPayment(p) {
+    var memberId = String(p.MemberID);
+    var d = new Date(p.Date);
+    var month = d.getMonth() + 1, year = d.getFullYear();
+    return db.collection('payments').where('member_id', '==', memberId).get().then(function (snap) {
+      var dup = false;
+      snap.forEach(function (doc) {
+        var dd = doc.data();
+        var pd = new Date(dd.date);
+        if ((pd.getMonth() + 1) === month && pd.getFullYear() === year) dup = true;
+      });
+      if (dup) return { success: false, message: 'এই মাসের কিস্তি ইতিমধ্যে জমা দেওয়া হয়েছে।' };
+
+      return db.collection('members').doc(memberId).get().then(function (mdoc) {
+        var fine = 0;
+        if (mdoc.exists) {
+          var mem = mdoc.data();
+          var day = d.getDate();
+          if (day > Number(mem.due_day || 0)) fine = Number(mem.fine_amount || 0);
+        }
+        return db.collection('payments').add({
+          member_id: memberId, amount: Number(p.Amount || 0), date: p.Date, fine: fine, note: p.Note || ''
+        }).then(function () { return { success: true }; });
+      });
+    });
+  }
+
+  function fsUpdatePayment(p) {
+    return db.collection('payments').doc(String(p.ID)).set({
+      member_id: String(p.MemberID), amount: Number(p.Amount || 0), date: p.Date,
+      fine: Number(p.Fine || 0), note: p.Note || ''
+    }, { merge: true }).then(function () { return { success: true }; });
+  }
+
+  function fsDeletePayment(paymentId) {
+    return db.collection('payments').doc(String(paymentId)).delete().then(function () { return { success: true }; });
+  }
+
+  function fsGetUsers() {
+    return db.collection('users').get().then(function (snap) {
+      var arr = [];
+      snap.forEach(function (doc) {
+        var d = doc.data();
+        arr.push({ Name: d.name, Username: doc.id, Role: d.role });
+      });
+      return { success: true, data: arr };
+    });
+  }
+
+  function fsAddUser(u) {
+    return db.collection('users').doc(String(u.Username)).set({
+      name: u.Name, password: u.Password, role: u.Role
+    }).then(function () { return { success: true }; });
+  }
+
+  function fsUpdateUser(u) {
+    var obj = { name: u.Name, role: u.Role };
+    if (u.Password) obj.password = u.Password;
+    return db.collection('users').doc(String(u.Username)).set(obj, { merge: true }).then(function () { return { success: true }; });
+  }
+
+  function fsDeleteUser(username) {
+    return db.collection('users').doc(String(username)).delete().then(function () { return { success: true }; });
+  }
+
+  function fsSendReportEmail(p) {
+    var d = state.dashboard || {};
+    var due = state.dueMembers || [];
+    var lines = due.map(function (m) { return '- ' + m.Name + ' (' + m.MemberNo + '): ৳' + money(m.dueAmount + m.dueFineAmount); });
+    var body = 'মোট উত্তোলিত টাকা: ৳' + money(d.totalCollected) + '\n' +
+      'মোট জরিমানা আদায়: ৳' + money(d.totalFineCollected) + '\n' +
+      'মোট বকেয়া (জরিমানাসহ): ৳' + money((d.duesAmount || 0) + (d.duesFine || 0)) + '\n' +
+      'বকেয়া সদস্য সংখ্যা: ' + due.length + '\n\n' + lines.join('\n');
+    var subject = p.subject || (ORG_NAME + ' — মাসিক প্রতিবেদন');
+    var mailto = 'mailto:' + encodeURIComponent(p.toEmail || '') + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    window.open(mailto, '_blank');
+    return Promise.resolve({ success: true });
+  }
+  function paymentMonthKeyClient(p) {
+    if (p.Month && /^\d{4}-\d{2}/.test(String(p.Month))) return String(p.Month).substring(0, 7);
+    var d = new Date(p.Date);
+    if (isNaN(d)) return '';
+    var mo = d.getMonth() + 1;
+    return d.getFullYear() + '-' + (mo < 10 ? '0' + mo : mo);
+  }
+
+  // --- স্মার্ট লেজার জেনারেটর (আজীবন হিসাবের জন্য) ---
+  function generateLedger(m, payments) {
+      var startYear = 2026, startMonth = 1;
+      var currYear = new Date().getFullYear();
+      var currMonth = new Date().getMonth() + 1;
+      var today = new Date().getDate();
+      var dueDay = Number(m.DueDay || 12);
+      var installment = Number(m.InstallmentAmount || 0);
+      var fineRate = Number(m.FineAmount || 0);
+      
+      var monthsList = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+      
+      var payMap = {};
+      (payments || []).forEach(function(p) {
+          var ym = paymentMonthKeyClient(p);
+          if (!payMap[ym]) payMap[ym] = { paid: 0, finePaid: 0, dates: [], notes: [], raw: [] };
+          payMap[ym].paid += Number(p.Amount || 0);
+          payMap[ym].finePaid += Number(p.Fine || 0);
+          payMap[ym].dates.push(p.Date);
+          if (p.Note) payMap[ym].notes.push(p.Note);
+          payMap[ym].raw.push(p);
+      });
+      
+      var allYm = new Set(Object.keys(payMap));
+      
+      var iterY = startYear, iterM = startMonth;
+      var loopLimit = 1200;
+      while(loopLimit-- > 0) {
+          var ym = iterY + '-' + (iterM < 10 ? '0' + iterM : iterM);
+          allYm.add(ym);
+          if (iterY === currYear && iterM === currMonth) break;
+          iterM++;
+          if (iterM > 12) { iterM = 1; iterY++; }
+      }
+      
+      var sortedYm = Array.from(allYm).sort();
+      var ledger = [];
+      
+      sortedYm.forEach(function(ym) {
+          var parts = ym.split('-');
+          var y = parseInt(parts[0]);
+          var mth = parseInt(parts[1]);
+          var mName = monthsList[mth - 1] + ' ' + y;
+          
+          var expectedAmt = (ym === '2026-01') ? 500 : installment;
+          var isPastDue = (y < currYear) || (y === currYear && mth < currMonth) || (y === currYear && mth === currMonth && today > dueDay);
+          
+          var pData = payMap[ym] || { paid: 0, finePaid: 0, dates: [], notes: [], raw: [] };
+          var dueAmt = expectedAmt - pData.paid;
+          if (dueAmt < 0) dueAmt = 0;
+          
+          var dueFine = (dueAmt > 0 && isPastDue) ? fineRate - pData.finePaid : 0;
+          if (dueFine < 0) dueFine = 0;
+          
+          ledger.push({
+              ym: ym,
+              monthName: mName,
+              expected: expectedAmt,
+              paid: pData.paid,
+              finePaid: pData.finePaid,
+              dueAmt: dueAmt,
+              dueFine: dueFine,
+              isPastDue: isPastDue,
+              dates: pData.dates,
+              notes: pData.notes,
+              raw: pData.raw
+          });
+      });
+      return ledger;
+  }
+
+  // --- SMART LIFETIME CALCULATION LOGIC ---
+  function calculateAllData() {
+      var globalTotalPaid = 0;
+      var globalTotalFine = 0;
+      state.dueMembers = [];
+      
+      state.members.forEach(function(m) {
+          var ledger = generateLedger(m, m.payments || []);
+          
+          var mPaid = 0, mFine = 0;
+          var missingMonths = [];
+          var totalDueAmount = 0, totalDueFine = 0;
+          
+          ledger.forEach(function(entry) {
+              mPaid += entry.paid;
+              mFine += entry.finePaid;
+              
+              if (entry.dueAmt > 0 || entry.dueFine > 0) {
+                  missingMonths.push({
+                      ym: entry.ym,
+                      monthName: entry.monthName,
+                      dueAmt: entry.dueAmt,
+                      dueFine: entry.dueFine
+                  });
+                  totalDueAmount += entry.dueAmt;
+                  totalDueFine += entry.dueFine;
+              }
+          });
+          
+          m.totalPaid = mPaid;
+          m.totalFine = mFine;
+          globalTotalPaid += mPaid;
+          globalTotalFine += mFine;
+          
+          m.missingMonths = missingMonths;
+          m.dueAmount = totalDueAmount;
+          m.dueFineAmount = totalDueFine;
+          
+          if (totalDueAmount > 0 || totalDueFine > 0) {
+              state.dueMembers.push(m);
+          }
+      });
+      
+      state.dashboard = {
+          totalMembers: state.members.length,
+          totalCollected: globalTotalPaid,
+          totalFineCollected: globalTotalFine,
+          duesAmount: state.dueMembers.reduce(function(sum, m) { return sum + m.dueAmount; }, 0),
+          duesFine: state.dueMembers.reduce(function(sum, m) { return sum + m.dueFineAmount; }, 0),
+          duesCount: state.dueMembers.length
+      };
+  }
+
+  function renderLogin(errMsg) {
+    root.innerHTML =
+      '<div class="ssa-login-wrap"><div class="ssa-login-card">' +
+        '<div class="ssa-seal">' + SEAL_SVG + '</div>' +
+        '<h1>' + ORG_NAME + '</h1>' +
+        '<p class="ssa-login-sub">' + ORG_SUB + ' — লগইন করুন</p>' +
+        '<form id="ssa-login-form">' +
+          '<div class="ssa-field"><label>ইউজারনেম</label><input type="text" id="ssa-user" autocomplete="username" required></div>' +
+          '<div class="ssa-field"><label>পাসওয়ার্ড</label><input type="password" id="ssa-pass" autocomplete="current-password" required></div>' +
+          '<button class="ssa-login-btn" type="submit">প্রবেশ করুন</button>' +
+          '<div class="ssa-login-error">' + (errMsg || '') + '</div>' +
+        '</form>' +
+      '</div></div>';
+
+    document.getElementById('ssa-login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var btn = e.target.querySelector('button');
+      btn.disabled = true; btn.textContent = 'যাচাই করা হচ্ছে...';
+      api('login', {
+        username: document.getElementById('ssa-user').value.trim(),
+        password: document.getElementById('ssa-pass').value
+      }).then(function (res) {
+        if (res.success) {
+          state.auth = { username: res.username, name: res.name, role: res.role };
+          sessionStorage.setItem('ssa_auth', JSON.stringify(state.auth));
+          renderApp();
+        } else {
+          renderLogin(res.message || 'লগইন ব্যর্থ হয়েছে');
+        }
+      }).catch(function () {
+        renderLogin('সার্ভারের সাথে সংযোগ করা যায়নি। API URL ঠিক আছে কিনা দেখুন।');
+      });
+    });
+  }
+
+  function renderApp() {
+    root.innerHTML =
+      '<div class="ssa-app" style="display:flex;">' +
+      '<div class="ssa-shell">' +
+        '<div class="ssa-sidebar">' +
+          '<div class="ssa-brand">' + SEAL_SVG.replace('viewBox="0 0 100 100"','viewBox="0 0 100 100" width="34" height="34"') +
+            '<div class="ssa-brand-text">' + ORG_NAME + '</div></div>' +
+          '<div class="ssa-nav">' +
+            '<button data-page="dashboard" class="active">' + ICON.dashboard + ' <span>ড্যাশবোর্ড</span></button>' +
+            '<button data-page="members">' + ICON.members + ' <span>সদস্যগণ</span></button>' +
+            '<button data-page="due">' + ICON.due + ' <span>বকেয়া</span></button>' +
+            (isAdmin() ? '<button data-page="users">' + ICON.users + ' <span>ইউজার</span></button>' : '') +
+          '</div>' +
+          '<div class="ssa-user-info">' +
+            '<div class="ssa-user-avatar">' + esc((state.auth && state.auth.name ? state.auth.name.charAt(0) : 'A')) + '</div>' +
+            '<div style="min-width:0;">' +
+              '<strong>' + esc(state.auth ? state.auth.name : '') + '</strong>' +
+              '<span>' + (isAdmin() ? 'এডমিন' : 'রিড-অনলি') + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<button class="ssa-logout" id="ssa-logout-btn">' + ICON.logout + ' লগ-আউট</button>' +
+        '</div>' +
+        '<div class="ssa-main" id="ssa-main"></div>' +
+      '</div></div>' +
+      '<div id="ssa-print-zone"></div>' +
+      modalsHtml();
+
+    document.getElementById('ssa-logout-btn').addEventListener('click', function () {
+      sessionStorage.removeItem('ssa_auth');
+      state.auth = null;
+      renderLogin();
+    });
+    
+    root.querySelectorAll('.ssa-nav button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        root.querySelectorAll('.ssa-nav button').forEach(function (x) { x.classList.remove('active'); });
+        b.classList.add('active');
+        state.page = b.dataset.page;
+        state.pagination = { members: 1, due: 1, dashDue: 1 };
+        
+        if (state.page === 'users') {
+          document.getElementById('ssa-main').innerHTML = '<div class="ssa-loading">তথ্য লোড হচ্ছে...</div>';
+          api('getUsers').then(function (res) {
+            if (!res.success) { document.getElementById('ssa-main').innerHTML = '<div class="ssa-empty">' + esc(res.message) + '</div>'; return; }
+            state.users = res.data || []; renderPage();
+          });
+        } else {
+          renderPage();
+        }
+      });
+    });
+    bindModals();
+    loadAll();
+  }
+
+  function loadAll() {
+    document.getElementById('ssa-main').innerHTML = '<div class="ssa-loading">তথ্য লোড হচ্ছে...</div>';
+    
+    api('getMembers').then(function (res) {
+      var fetchedMembers = res.data || [];
+      
+      // সদস্য নং অনুযায়ী সিরিয়াল করা (SH-01, SH-02 ক্রমানুসারে)
+      fetchedMembers.sort(function(a, b) {
+          var numA = parseInt(String(a.MemberNo || '').replace(/\D/g, '')) || 0;
+          var numB = parseInt(String(b.MemberNo || '').replace(/\D/g, '')) || 0;
+          return numA - numB;
+      });
+      
+      state.members = fetchedMembers;
+      var index = 0;
+      
+      function fetchNextPayments() {
+          if (index >= state.members.length) {
+              calculateAllData();
+              renderPage();
+              return;
+          }
+          var m = state.members[index];
+          api('getPayments', { memberId: m.ID }).then(function(pres) {
+              m.payments = pres.data || [];
+              index++;
+              fetchNextPayments();
+          }).catch(function() {
+              m.payments = [];
+              index++;
+              fetchNextPayments();
+          });
+      }
+      fetchNextPayments();
+      
+    }).catch(function() {
+      document.getElementById('ssa-main').innerHTML = '<div class="ssa-empty">তথ্য লোড করতে সমস্যা হয়েছে। সার্ভার চেক করুন।</div>';
+    });
+  }
+
+  function renderPage() {
+    if (state.page === 'dashboard') renderDashboard();
+    else if (state.page === 'due') renderDueMembers();
+    else if (state.page === 'users') renderUsers();
+    else renderMembers();
+  }
+  
+  function renderPagination(totalItems, currentPage, type) {
+    var totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+    if (totalPages <= 1) return '';
+    
+    var html = '<div class="ssa-pagination">';
+    for (var i = 1; i <= totalPages; i++) {
+        var activeClass = i === currentPage ? 'active' : '';
+        html += '<button class="ssa-page-btn ' + activeClass + '" onclick="changePage(\'' + type + '\', ' + i + ')">' + i + '</button>';
+    }
+    html += '</div>';
+    return html;
+  }
+  
+  window.changePage = function(type, page) {
+    state.pagination[type] = page;
+    if (type === 'members') renderMembers(document.getElementById('ssa-search-inp') ? document.getElementById('ssa-search-inp').value : '');
+    else if (type === 'due') renderDueMembers();
+    else if (type === 'dashDue') renderDashboard();
+    
+    document.getElementById('ssa-main').scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  function showDueMonthsModal(m) {
+      if (!m || !m.missingMonths || m.missingMonths.length === 0) return;
+      document.getElementById('due-months-name').textContent = m.Name;
+      
+      var rows = m.missingMonths.map(function(mm) {
+          var fineHtml = mm.dueFine > 0 ? '<div style="color:var(--brick); font-size: 13.5px; font-weight:500;">+ ৳' + money(mm.dueFine) + ' জরিমানা</div>' : '';
+          return '<div style="display:flex; justify-content:space-between; padding:12px 10px; border-bottom:1px dashed var(--line); align-items:center;">' +
+                 '<span style="font-weight:500; font-size: 15.5px;">' + mm.monthName + '</span>' +
+                 '<span style="text-align:right;"><div style="color:var(--ink); font-weight:700; font-size: 16px;">৳' + money(mm.dueAmt) + '</div>' + fineHtml + '</span>' +
+                 '</div>';
+      }).join('');
+      
+      var total = '<div style="display:flex; justify-content:space-between; padding:16px 12px; background:var(--brick-soft); border-radius:10px; margin-top:16px; color:var(--brick); font-weight:700; font-size: 17px;">' +
+                  '<span>মোট বকেয়া</span>' +
+                  '<span>৳' + money(m.dueAmount + m.dueFineAmount) + '</span>' +
+                  '</div>';
+                  
+      document.getElementById('due-months-list').innerHTML = rows + total;
+      document.getElementById('ssa-due-months-overlay').style.display = 'flex';
+  }
+
+  function renderDashboard() {
+    var d = state.dashboard || {};
+    var due = state.dueMembers || [];
+    var totalDue = due.reduce(function (s, m) { return s + Number(m.dueAmount || 0) + Number(m.dueFineAmount || 0); }, 0);
+    var todayStr = bnDate(new Date());
+    var monthStr = bnMonthYear(new Date());
+    
+    var currentPage = state.pagination.dashDue;
+    var startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    var paginatedDue = due.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+    var dueRows = paginatedDue.map(function (m) {
+      return '<tr>' +
+        '<td>' + esc(m.Name) + '</td>' +
+        '<td class="ssa-en">' + esc(m.MemberNo) + '</td>' +
+        '<td class="ssa-en">' + (formatMobile(m.Mobile) || '—') + '</td>' +
+        '<td><button class="ssa-pill brick ssa-btn-clickable-pill" data-act="view-dues" data-id="' + m.ID + '" title="বকেয়া বিস্তারিত দেখতে ক্লিক করুন">৳' + money(m.dueAmount + m.dueFineAmount) + '</button></td>' +
+      '</tr>';
+    }).join('');
+
+    document.getElementById('ssa-main').innerHTML =
+      '<h2 class="ssa-page-title">ড্যাশবোর্ড</h2>' +
+      '<p class="ssa-page-sub">আজকের তারিখ: ' + todayStr + ' &nbsp;•&nbsp; কিস্তির মাস: ' + monthStr + '</p>' +
+      '<div class="ssa-stats">' +
+        stat('মোট উত্তোলিত টাকা', '৳ ' + money(d.totalCollected), false, ICON.wallet) +
+        stat('মোট জরিমানা আদায়', '৳ ' + money(d.totalFineCollected), false, ICON.receipt) +
+        stat('মোট বকেয়া (জরিমানাসহ)', '৳ ' + money(d.duesAmount + d.duesFine), true, ICON.alert) +
+        stat('বকেয়া সদস্য সংখ্যা', money(d.duesCount), true, ICON.members) +
+      '</div>' +
+      '<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:26px;">' +
+      '<button class="ssa-btn ssa-btn-gold" id="ssa-dash-report">' + ICON.pdf + ' মাসিক প্রতিবেদন ডাউনলোড (PDF)</button>' +
+      (isAdmin() ? '<button class="ssa-btn ssa-btn-ghost" id="ssa-dash-email">' + ICON.mail + ' ইমেইল রিপোর্ট পাঠান</button>' : '') +
+      '</div>' +
+      '<h3 class="ssa-page-title" style="font-size:19px;">বকেয়া সদস্য তালিকা</h3>' +
+      '<p class="ssa-page-sub">' + due.length + ' জন সদস্যের জরিমানাসহ মোট ৳' + money(totalDue) + ' বকেয়া রয়েছে</p>' +
+      '<div class="ssa-table-wrap">' +
+        (due.length ?
+        '<table class="ssa-table" style="min-width:520px;"><thead><tr><th>নাম</th><th>সদস্য নং</th><th>মোবাইল</th><th>মোট বকেয়া</th></tr></thead><tbody>' + dueRows + '</tbody></table>'
+        : '<div class="ssa-empty">' + ICON.celebrate + ' কোনো বকেয়া নেই — সবাই সঠিকভাবে কিস্তি জমা দিচ্ছেন</div>') +
+      '</div>' +
+      renderPagination(due.length, currentPage, 'dashDue');
+
+    document.getElementById('ssa-dash-report').addEventListener('click', function() {
+        var now = new Date();
+        var mo = now.getMonth() + 1;
+        var ym = now.getFullYear() + '-' + (mo < 10 ? '0' + mo : mo);
+        document.getElementById('report-month-input').value = ym;
+        document.getElementById('report-loading-msg').style.display = 'none';
+        document.getElementById('ssa-month-report-overlay').style.display = 'flex';
+    });
+    
+    var emailBtn = document.getElementById('ssa-dash-email');
+    if (emailBtn) emailBtn.addEventListener('click', openEmailModal);
+    
+    bindDueClicks();
+  }
+  function stat(label, val, warn, icon) {
+    return '<div class="ssa-stat' + (warn ? ' warn' : '') + '">' +
+      (icon ? '<div class="ssa-stat-icon">' + icon + '</div>' : '') +
+      '<div class="ssa-stat-label">' + label + '</div><div class="ssa-stat-value">' + val + '</div></div>';
+  }
+
+  function renderMembers(filter) {
+    var q = (filter || '').trim().toLowerCase();
+    var list = state.members.filter(function (m) {
+      if (!q) return true;
+      return String(m.Name || '').toLowerCase().indexOf(q) > -1 || String(m.Mobile || '').indexOf(q) > -1 || String(m.MemberNo||'').toLowerCase().indexOf(q) > -1;
+    });
+    
+    var currentPage = state.pagination.members;
+    var startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    var paginatedList = list.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+    var rows = paginatedList.map(function (m, idx) {
+      var realIdx = startIndex + idx + 1;
+      var imgTag = getAvatarHtml(getMemberPhoto(m));
+      return '<tr>' +
+        '<td class="ssa-en">' + realIdx + '</td>' +
+        '<td>' + imgTag + '</td>' +
+        '<td><button class="ssa-link-name" data-act="view" data-id="' + m.ID + '" style="background:none;border:none;padding:0;color:var(--teal-deep);font-weight:600;text-decoration:underline;cursor:pointer;font-size:inherit;font-family:inherit;">' + esc(m.Name) + '</button></td>' +
+        '<td class="ssa-en">' + esc(m.MemberNo) + '</td>' +
+        '<td class="ssa-en">' + formatMobile(m.Mobile) + '</td>' +
+        '<td>৳' + money(m.InstallmentAmount) + '</td>' +
+        '<td><span class="ssa-pill gold">৳' + money(m.totalPaid) + '</span></td>' +
+        '<td>' + (m.dueFineAmount > 0 ? '<span class="ssa-pill brick">৳' + money(m.dueFineAmount) + '</span>' : '—') + '</td>' +
+        '<td><div class="ssa-actions">' +
+          (isAdmin() ? '<button class="ssa-btn ssa-btn-sm ssa-btn-primary" data-act="pay" data-id="' + m.ID + '">কিস্তি</button>' : '') +
+          (isAdmin() ? '<button class="ssa-btn ssa-btn-sm ssa-btn-ghost" data-act="edit" data-id="' + m.ID + '">এডিট</button>' : '') +
+          '<button class="ssa-btn ssa-btn-sm ssa-btn-ghost" data-act="card" data-id="' + m.ID + '">কার্ড</button>' +
+          '<button class="ssa-btn ssa-btn-sm ssa-btn-ghost" data-act="stmt-modal" data-id="' + m.ID + '">স্টেটমেন্ট</button>' +
+          (isAdmin() ? '<button class="ssa-btn ssa-btn-sm ssa-btn-danger" data-act="del" data-id="' + m.ID + '">ডিলিট</button>' : '') +
+        '</div></td>' +
+      '</tr>';
+    }).join('');
+
+    document.getElementById('ssa-main').innerHTML =
+      '<h2 class="ssa-page-title">সদস্যগণ</h2>' +
+      '<p class="ssa-page-sub">মোট ' + list.length + ' জন সদস্য</p>' +
+      '<div class="ssa-toolbar">' +
+        '<div class="ssa-search"><input id="ssa-search-inp" placeholder="নাম অথবা মোবাইল দিয়ে খুঁজুন..." value="' + esc(filter||'') + '"></div>' +
+        (isAdmin() ? '<button class="ssa-btn ssa-btn-primary" id="ssa-add-member">+ নতুন সদস্য</button>' : '') +
+      '</div>' +
+      '<div class="ssa-table-wrap">' +
+        (list.length ?
+        '<table class="ssa-table"><thead><tr><th>ক্রমিক</th><th></th><th>নাম</th><th>সদস্য নং</th><th>মোবাইল</th><th>কিস্তি</th><th>মোট জমা</th><th>বকেয়া জরিমানা</th><th>কার্যক্রম</th></tr></thead><tbody>' + rows + '</tbody></table>'
+        : '<div class="ssa-empty">কোনো সদস্য পাওয়া যায়নি</div>') +
+      '</div>' +
+      renderPagination(list.length, currentPage, 'members');
+
+    var searchInp = document.getElementById('ssa-search-inp');
+    searchInp.addEventListener('input', function (e) {
+      state.pagination.members = 1; 
+      var cursorPos = e.target.selectionStart;
+      renderMembers(e.target.value);
+      var newInp = document.getElementById('ssa-search-inp');
+      if (newInp) {
+        newInp.focus();
+        try { newInp.setSelectionRange(cursorPos, cursorPos); } catch (err) {}
+      }
+    });
+    
+    var addBtn = document.getElementById('ssa-add-member');
+    if (addBtn) addBtn.addEventListener('click', function () { openMemberModal(null); });
+    
+    document.querySelectorAll('#ssa-main [data-act]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.dataset.id, act = btn.dataset.act;
+        var m = state.members.filter(function (x) { return String(x.ID) === String(id); })[0];
+        if (act === 'edit') openMemberModal(m);
+        else if (act === 'pay') openPaymentModal(m);
+        else if (act === 'del') deleteMemberConfirm(m);
+        else if (act === 'card') downloadProfileCard(m);
+        else if (act === 'stmt-modal') openStatementModal(m);
+        else if (act === 'view') showProfileModal(m);
+      });
+    });
+  }
+
+  function renderDueMembers() {
+    var list = state.dueMembers || [];
+    
+    var currentPage = state.pagination.due;
+    var startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    var paginatedList = list.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    
+    var rows = paginatedList.map(function (m, idx) {
+      var realIdx = startIndex + idx + 1;
+      var wa = whatsappLink(m, 'প্রিয় ' + m.Name + ', আপনার ' + ORG_NAME + '-এর জরিমানাসহ মোট ৳' + money(m.dueAmount + m.dueFineAmount) + ' কিস্তি বকেয়া রয়েছে। অনুগ্রহ করে দ্রুত পরিশোধ করুন। ধন্যবাদ — ' + ORG_NAME);
+      var imgTag = getAvatarHtml(getMemberPhoto(m));
+
+      return '<tr>' +
+        '<td class="ssa-en">' + realIdx + '</td>' +
+        '<td>' + imgTag + '</td>' +
+        '<td><button class="ssa-link-name" data-act="view" data-id="' + m.ID + '" style="background:none;border:none;padding:0;color:var(--teal-deep);font-weight:600;text-decoration:underline;cursor:pointer;font-size:inherit;font-family:inherit;">' + esc(m.Name) + '</button></td>' +
+        '<td class="ssa-en">' + esc(m.MemberNo) + '</td>' +
+        '<td class="ssa-en">' + (formatMobile(m.Mobile) || '—') + '</td>' +
+        '<td><button class="ssa-pill brick ssa-btn-clickable-pill" data-act="view-dues" data-id="' + m.ID + '" title="বকেয়া মাস দেখতে ক্লিক করুন">৳' + money(m.dueAmount + m.dueFineAmount) + '</button></td>' +
+        '<td><div class="ssa-actions">' +
+          (isAdmin() ? '<button class="ssa-btn ssa-btn-sm ssa-btn-primary" data-act="pay" data-id="' + m.ID + '">কিস্তি জমা দিন</button>' : '') +
+          (wa && isAdmin() ? '<a class="ssa-btn ssa-btn-sm ssa-btn-ghost" style="text-decoration:none;" href="' + wa + '" target="_blank" rel="noopener">WhatsApp</a>' : '') +
+        '</div></td>' +
+      '</tr>';
+    }).join('');
+
+    var totalDue = list.reduce(function (s, m) { return s + m.dueAmount + m.dueFineAmount; }, 0);
+
+    document.getElementById('ssa-main').innerHTML =
+      '<h2 class="ssa-page-title">বকেয়া সদস্য</h2>' +
+      '<p class="ssa-page-sub">কিস্তি বকেয়া রয়েছে এমন ' + list.length + ' জন সদস্য — মোট বকেয়া ৳' + money(totalDue) + '</p>' +
+      '<div class="ssa-table-wrap">' +
+        (list.length ?
+        '<table class="ssa-table"><thead><tr><th>ক্রমিক</th><th></th><th>নাম</th><th>সদস্য নং</th><th>মোবাইল</th><th>বকেয়া</th><th>কার্যক্রম</th></tr></thead><tbody>' + rows + '</tbody></table>'
+        : '<div class="ssa-empty">' + ICON.celebrate + ' কোনো বকেয়া নেই — সবাই সঠিকভাবে কিস্তি জমা দিচ্ছেন</div>') +
+      '</div>' +
+      renderPagination(list.length, currentPage, 'due');
+
+    document.querySelectorAll('#ssa-main [data-act]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.dataset.id, act = btn.dataset.act;
+        var m = state.members.filter(function (x) { return String(x.ID) === String(id); })[0];
+        if (!m) return;
+        if (act === 'pay') openPaymentModal(m);
+        else if (act === 'view') showProfileModal(m);
+        else if (act === 'view-dues') showDueMonthsModal(m);
+      });
+    });
+  }
+  
+  function bindDueClicks() {
+      document.querySelectorAll('#ssa-main [data-act="view-dues"]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+              var id = btn.dataset.id;
+              var m = state.members.filter(function (x) { return String(x.ID) === String(id); })[0];
+              showDueMonthsModal(m);
+          });
+      });
+  }
+
+  function renderUsers() {
+    if (!isAdmin()) {
+      document.getElementById('ssa-main').innerHTML = '<div class="ssa-empty">এই পেইজ দেখার অনুমতি আপনার নেই</div>';
+      return;
+    }
+    var rows = (state.users || []).map(function (u) {
+      return '<tr>' +
+        '<td>' + esc(u.Name) + '</td>' +
+        '<td>' + esc(u.Username) + '</td>' +
+        '<td>' + (u.Role === 'Admin' ? '<span class="ssa-pill gold">এডমিন</span>' : '<span class="ssa-pill" style="background:var(--moss);color:var(--teal-deep);">মেম্বার (রিড-অনলি)</span>') + '</td>' +
+        '<td><div class="ssa-actions">' +
+          '<button class="ssa-btn ssa-btn-sm ssa-btn-ghost" data-uact="edit" data-uname="' + esc(u.Username) + '">এডিট</button>' +
+          '<button class="ssa-btn ssa-btn-sm ssa-btn-danger" data-uact="del" data-uname="' + esc(u.Username) + '">ডিলিট</button>' +
+        '</div></td>' +
+      '</tr>';
+    }).join('');
+
+    document.getElementById('ssa-main').innerHTML =
+      '<h2 class="ssa-page-title">ইউজার ম্যানেজমেন্ট</h2>' +
+      '<p class="ssa-page-sub">এডমিন সব কাজ করতে পারবেন; সাধারণ মেম্বাররা শুধুমাত্র তথ্য দেখতে ও পিডিএফ ডাউনলোড করতে পারবেন।</p>' +
+      '<div class="ssa-toolbar"><div></div><button class="ssa-btn ssa-btn-primary" id="ssa-add-user">+ নতুন ইউজার</button></div>' +
+      '<div class="ssa-table-wrap"><table class="ssa-table"><thead><tr><th>নাম</th><th>ইউজারনেম</th><th>রোল</th><th>কার্যক্রম</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+
+    document.getElementById('ssa-add-user').addEventListener('click', function () { openUserModal(null); });
+    document.querySelectorAll('#ssa-main [data-uact]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var uname = btn.dataset.uname, act = btn.dataset.uact;
+        var u = state.users.filter(function (x) { return x.Username === uname; })[0];
+        if (act === 'edit') openUserModal(u);
+        else if (act === 'del') {
+          showConfirm(u.Name + ' (' + u.Username + ') — এই ইউজারকে মুছে ফেলতে চান?', function() {
+              api('deleteUser', { username: u.Username }).then(function (res) {
+                if (!res.success) { showAlert(res.message); return; }
+                api('getUsers').then(function (r) { state.users = r.data || []; renderUsers(); });
+              });
+          });
+        }
+      });
+    });
+  }
+
+  function modalsHtml() {
+    return (
+      '<div class="ssa-overlay" id="ssa-member-overlay"><div class="ssa-modal">' +
+        '<h3 id="ssa-member-modal-title">নতুন সদস্য</h3>' +
+        '<form id="ssa-member-form">' +
+          '<input type="hidden" id="mf-id">' +
+          field('mf-name','নাম','text',true) +
+          field('mf-no','সদস্য নং (যেমন SH-15)','text',true) +
+          field('mf-mobile','মোবাইল নম্বর','text',false) +
+          '<div class="ssa-field"><label>সদস্যের ছবি</label>' +
+            '<div class="ssa-photo-upload">' +
+              '<img id="mf-photo-preview" class="ssa-photo-preview" src="" alt="">' +
+              '<div class="ssa-photo-upload-controls">' +
+                '<input type="file" id="mf-photo-file" accept="image/*">' +
+                '<div class="ssa-photo-status" id="mf-photo-status"></div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          field('mf-installment','মাসিক কিস্তির পরিমাণ (৳)','number',true) +
+          field('mf-dueday','কিস্তি পরিশোধের শেষ তারিখ (১-১২ তারিখ)','number',true) +
+          field('mf-fine','জরিমানা (৳) — নির্দিষ্ট তারিখের পর জমা দিলে','number',true) +
+          '<div class="ssa-modal-actions">' +
+            '<button type="button" class="ssa-btn ssa-btn-ghost" data-close>বাতিল</button>' +
+            '<button type="submit" class="ssa-btn ssa-btn-primary">সংরক্ষণ করুন</button>' +
+          '</div>' +
+        '</form>' +
+      '</div></div>' +
+
+      '<div class="ssa-overlay" id="ssa-pay-overlay"><div class="ssa-modal">' +
+        '<h3>কিস্তি জমা — <span id="pay-member-name"></span></h3>' +
+        '<form id="ssa-pay-form">' +
+          '<input type="hidden" id="pf-member-id">' +
+          '<div class="ssa-field"><label>কোন মাসের কিস্তি?</label><select id="pf-target-month" style="width:100%; padding:11px 13px; border:1px solid var(--line); border-radius:9px; font-size:16px; font-family:inherit; background:#FDFCF9;" required></select></div>' +
+          field('pf-amount','জমার পরিমাণ (৳)','number',true) +
+          field('pf-fine','জরিমানা প্রদান (৳)','number',false) +
+          field('pf-date','জমার তারিখ','date',true) +
+          field('pf-note','মন্তব্য (ঐচ্ছিক)','text',false) +
+          '<div id="pf-error" style="display:none;color:var(--brick);font-size:14.5px;margin-top:8px;"></div>' +
+          '<div class="ssa-modal-actions">' +
+            '<button type="button" class="ssa-btn ssa-btn-ghost" data-close>বাতিল</button>' +
+            '<button type="submit" class="ssa-btn ssa-btn-primary">জমা নিশ্চিত করুন</button>' +
+          '</div>' +
+        '</form>' +
+      '</div></div>' +
+      
+      '<div class="ssa-overlay" id="ssa-statement-overlay"><div class="ssa-modal ssa-stmt-modal">' +
+        '<h3>কিস্তি জমা তালিকা — <span id="stmt-member-name"></span></h3>' +
+        '<div id="stmt-content-area"><div class="ssa-loading">লোড হচ্ছে...</div></div>' +
+        '<div class="ssa-modal-actions">' +
+          '<button type="button" class="ssa-btn ssa-btn-ghost" data-close>বন্ধ করুন</button>' +
+          '<button type="button" class="ssa-btn ssa-btn-gold" id="stmt-download-btn">' + ICON.pdf + ' স্টেটমেন্ট ডাউনলোড (PDF)</button>' +
+        '</div>' +
+      '</div></div>' +
+      
+      '<div class="ssa-overlay" id="ssa-edit-payment-overlay"><div class="ssa-modal">' +
+        '<h3>কিস্তি সংশোধন</h3>' +
+        '<form id="ssa-edit-pay-form">' +
+          '<input type="hidden" id="epf-payment-id">' +
+          '<input type="hidden" id="epf-member-id">' +
+          field('epf-month','কিস্তির মাস (যেমন: 2026-03)','month',true) +
+          field('epf-amount','জমার পরিমাণ (৳)','number',true) +
+          field('epf-date','জমার তারিখ','date',true) +
+          field('epf-fine','জরিমানা (৳)','number',false) +
+          field('epf-note','মন্তব্য (ঐচ্ছিক)','text',false) +
+          '<div class="ssa-modal-actions">' +
+            '<button type="button" class="ssa-btn ssa-btn-ghost" data-close>বাতিল</button>' +
+            '<button type="submit" class="ssa-btn ssa-btn-primary">আপডেট করুন</button>' +
+          '</div>' +
+        '</form>' +
+      '</div></div>' +
+
+      '<div class="ssa-overlay" id="ssa-user-overlay"><div class="ssa-modal">' +
+        '<h3 id="ssa-user-modal-title">নতুন ইউজার</h3>' +
+        '<form id="ssa-user-form">' +
+          '<input type="hidden" id="uf-original-username">' +
+          field('uf-username','ইউজারনেম (ইংরেজিতে)','text',true) +
+          field('uf-password','পাসওয়ার্ড (খালি রাখলে আগেরটাই থাকবে)','text',false) +
+          field('uf-name','নাম','text',true) +
+          '<div class="ssa-field"><label>রোল</label><select id="uf-role">' +
+            '<option value="Operator">মেম্বার (শুধুমাত্র দেখতে পারবে)</option>' +
+            '<option value="Admin">এডমিন (সম্পূর্ণ অনুমতি)</option>' +
+          '</select></div>' +
+          '<div class="ssa-modal-actions">' +
+            '<button type="button" class="ssa-btn ssa-btn-ghost" data-close>বাতিল</button>' +
+            '<button type="submit" class="ssa-btn ssa-btn-primary">সংরক্ষণ করুন</button>' +
+          '</div>' +
+        '</form>' +
+      '</div></div>' +
+
+      '<div class="ssa-overlay" id="ssa-profile-overlay"><div class="ssa-modal" style="max-width:610px; padding:22px; text-align:center;">' +
+        '<div id="ssa-profile-card-holder" style="display:flex; justify-content:center; overflow-x:auto; padding:2px;"></div>' +
+        '<div class="ssa-modal-actions" style="justify-content:center;">' +
+          '<button type="button" class="ssa-btn ssa-btn-ghost" data-close>বন্ধ করুন</button>' +
+          '<button type="button" class="ssa-btn ssa-btn-gold" id="ssa-profile-download-btn">' + ICON.pdf + ' আইডি কার্ড ডাউনলোড</button>' +
+        '</div>' +
+      '</div></div>' +
+
+      '<div class="ssa-overlay" id="ssa-email-overlay"><div class="ssa-modal">' +
+        '<h3>ইমেইল রিপোর্ট পাঠান</h3>' +
+        '<form id="ssa-email-form">' +
+          field('ef-to','প্রাপকের ইমেইল ঠিকানা','email',true) +
+          field('ef-subject','বিষয় (ঐচ্ছিক)','text',false) +
+          '<p style="font-size:14.5px;color:var(--ink-soft);">ড্যাশবোর্ডের সারসংক্ষেপ ও এই মাসের বকেয়া সদস্যদের তালিকাসহ একটি প্রতিবেদন পাঠানো হবে।</p>' +
+          '<div class="ssa-modal-actions">' +
+            '<button type="button" class="ssa-btn ssa-btn-ghost" data-close>বাতিল</button>' +
+            '<button type="submit" class="ssa-btn ssa-btn-primary">পাঠান</button>' +
+          '</div>' +
+        '</form>' +
+      '</div></div>' +
+      
+      '<div class="ssa-overlay" id="ssa-month-report-overlay"><div class="ssa-modal">' +
+        '<h3>মাসিক প্রতিবেদন ডাউনলোড</h3>' +
+        '<div class="ssa-field">' +
+          '<label>মাস নির্বাচন করুন</label>' +
+          '<input type="month" id="report-month-input" style="width:100%; padding:11px 13px; border:1px solid var(--line); border-radius:9px; font-size:16.5px;" required>' +
+        '</div>' +
+        '<div id="report-loading-msg" style="display:none; color:var(--teal); font-size:14.5px; margin-top:12px; font-weight:500;">তথ্য সংগ্রহ করা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</div>' +
+        '<div class="ssa-modal-actions">' +
+          '<button type="button" class="ssa-btn ssa-btn-ghost" data-close>বাতিল</button>' +
+          '<button type="button" class="ssa-btn ssa-btn-primary" id="btn-generate-month-report">ডাউনলোড করুন</button>' +
+        '</div>' +
+      '</div></div>' +
+      
+      // Due Months Specific Modal
+      '<div class="ssa-overlay" id="ssa-due-months-overlay"><div class="ssa-modal" style="max-width: 420px;">' +
+        '<h3>বকেয়া মাসসমূহ — <span id="due-months-name"></span></h3>' +
+        '<div id="due-months-list" style="margin-top: 10px;"></div>' +
+        '<div class="ssa-modal-actions" style="justify-content: center;">' +
+          '<button type="button" class="ssa-btn ssa-btn-ghost" data-close style="width:100%;">বন্ধ করুন</button>' +
+        '</div>' +
+      '</div></div>' +
+
+      // Custom Dialogs
+      '<div class="ssa-dialog-overlay" id="ssa-alert-overlay"><div class="ssa-dialog">' +
+        '<p id="ssa-alert-msg"></p>' +
+        '<div class="ssa-modal-actions"><button type="button" class="ssa-btn ssa-btn-primary" onclick="document.getElementById(\'ssa-alert-overlay\').style.display=\'none\'">ওকে</button></div>' +
+      '</div></div>' +
+      
+      '<div class="ssa-dialog-overlay" id="ssa-confirm-overlay"><div class="ssa-dialog">' +
+        '<p id="ssa-confirm-msg"></p>' +
+        '<div class="ssa-modal-actions">' +
+          '<button type="button" class="ssa-btn ssa-btn-ghost" onclick="document.getElementById(\'ssa-confirm-overlay\').style.display=\'none\'">বাতিল</button>' +
+          '<button type="button" class="ssa-btn ssa-btn-danger" id="ssa-btn-confirm-yes">নিশ্চিত করুন</button>' +
+        '</div>' +
+      '</div></div>'
+    );
+  }
+  function field(id, label, type, req) {
+    return '<div class="ssa-field"><label>' + label + '</label><input id="' + id + '" type="' + type + '"' + (req ? ' required' : '') + '></div>';
+  }
+
+  function bindModals() {
+    root.querySelectorAll('[data-close]').forEach(function (b) {
+      b.addEventListener('click', function () { b.closest('.ssa-overlay').style.display = 'none'; });
+    });
+    
+    var photoFileInput = document.getElementById('mf-photo-file');
+    if (photoFileInput) {
+      photoFileInput.addEventListener('change', function (e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var statusEl = document.getElementById('mf-photo-status');
+        var previewEl = document.getElementById('mf-photo-preview');
+        if (file.size > 4 * 1024 * 1024) {
+          statusEl.textContent = 'ছবির আকার ৪ এমবি-র বেশি হওয়া যাবে না।';
+          statusEl.style.color = 'var(--brick)';
+          e.target.value = '';
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function () {
+          state.pendingPhotoDataUrl = String(reader.result);
+          previewEl.src = state.pendingPhotoDataUrl;
+          previewEl.style.display = 'inline-block';
+          statusEl.textContent = 'ছবি প্রস্তুত — "সংরক্ষণ করুন" চাপলে যুক্ত হবে।';
+          statusEl.style.color = 'var(--teal)';
+        };
+        reader.onerror = function () {
+          statusEl.textContent = 'ছবিটি পড়া যায়নি, আবার চেষ্টা করুন।';
+          statusEl.style.color = 'var(--brick)';
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('ssa-member-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var memberNoVal = document.getElementById('mf-no').value.trim();
+
+      var member = {
+        ID: document.getElementById('mf-id').value || undefined,
+        Name: document.getElementById('mf-name').value,
+        MemberNo: memberNoVal,
+        Mobile: document.getElementById('mf-mobile').value,
+        InstallmentAmount: document.getElementById('mf-installment').value,
+        DueDay: document.getElementById('mf-dueday').value,
+        FineAmount: document.getElementById('mf-fine').value
+      };
+      
+      // ছবি Firestore-এ সেভ করা হবে (cross-device সাপোর্টের জন্য)
+      if (state.pendingPhotoDataUrl) {
+        member.Photo = state.pendingPhotoDataUrl;
+      } else if (state.editingMemberPhotoDataUrl) {
+        // এডিটের সময় আগের ছবি রাখা
+        member.Photo = state.editingMemberPhotoDataUrl;
+      }
+      
+      var isEdit = !!member.ID;
+      var saveBtn = e.target.querySelector('button[type="submit"]');
+      saveBtn.disabled = true; saveBtn.textContent = 'সংরক্ষণ হচ্ছে...';
+      
+      api(isEdit ? 'updateMember' : 'addMember', { member: member }).then(function () {
+        saveBtn.disabled = false; saveBtn.textContent = 'সংরক্ষণ করুন';
+        document.getElementById('ssa-member-overlay').style.display = 'none';
+        loadAll(); 
+      }).catch(function() {
+        saveBtn.disabled = false; saveBtn.textContent = 'সংরক্ষণ করুন';
+        showAlert('সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।');
+      });
+    });
+
+    document.getElementById('ssa-pay-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var memberId = document.getElementById('pf-member-id').value;
+      var targetMonth = document.getElementById('pf-target-month').value;
+      var amount = Number(document.getElementById('pf-amount').value || 0);
+      var fine = Number(document.getElementById('pf-fine').value || 0);
+      var dateVal = document.getElementById('pf-date').value;
+      
+      var submitBtn = e.target.querySelector('button[type="submit"]');
+      var errEl = document.getElementById('pf-error');
+      
+      errEl.style.display = 'none';
+      submitBtn.disabled = true; submitBtn.textContent = 'জমা হচ্ছে...';
+      
+      api('addPayment', {
+        payment: {
+          MemberID: memberId,
+          Month: targetMonth, 
+          Amount: amount,
+          Fine: fine,
+          Date: dateVal,
+          Note: document.getElementById('pf-note').value
+        }
+      }).then(function (res) {
+        submitBtn.disabled = false; submitBtn.textContent = 'জমা নিশ্চিত করুন';
+        if (!res || res.success === false) {
+          errEl.textContent = (res && res.message) ? res.message : 'জমা করা যায়নি';
+          errEl.style.display = 'block';
+          return;
+        }
+        document.getElementById('ssa-pay-overlay').style.display = 'none';
+        loadAll(); 
+        
+      }).catch(function () {
+        submitBtn.disabled = false; submitBtn.textContent = 'জমা নিশ্চিত করুন';
+        errEl.textContent = 'জমা করা যায়নি, আবার চেষ্টা করুন।';
+        errEl.style.display = 'block';
+      });
+    });
+    
+    document.getElementById('ssa-edit-pay-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var pId = document.getElementById('epf-payment-id').value;
+        var mId = document.getElementById('epf-member-id').value;
+        var btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.textContent = 'সেভ হচ্ছে...';
+        
+        api('updatePayment', {
+            payment: {
+                ID: pId,
+                MemberID: mId,
+                Month: document.getElementById('epf-month').value,
+                Amount: Number(document.getElementById('epf-amount').value || 0),
+                Date: document.getElementById('epf-date').value,
+                Fine: Number(document.getElementById('epf-fine').value || 0),
+                Note: document.getElementById('epf-note').value
+            }
+        }).then(function(res) {
+            btn.disabled = false; btn.textContent = 'আপডেট করুন';
+            if(!res.success) {
+                showAlert(res.message || 'আপডেট করা যায়নি।');
+                return;
+            }
+            document.getElementById('ssa-edit-payment-overlay').style.display = 'none';
+            document.getElementById('stmt-content-area').innerHTML = '<div class="ssa-loading">লোড হচ্ছে...</div>';
+            api('getMembers').then(function(resMem){
+                state.members = resMem.data || [];
+                api('getPayments', { memberId: mId }).then(function(resPay){
+                    var updatedM = state.members.filter(function(x){ return x.ID == mId; })[0];
+                    if(updatedM) {
+                        updatedM.payments = resPay.data || [];
+                        calculateAllData();
+                        renderPage();
+                        openStatementModal(updatedM);
+                    }
+                });
+            });
+        }).catch(function() {
+            btn.disabled = false; btn.textContent = 'আপডেট করুন';
+            showAlert('নেটওয়ার্ক সমস্যা, আবার চেষ্টা করুন।');
+        });
+    });
+
+    document.getElementById('ssa-user-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var originalUsername = document.getElementById('uf-original-username').value;
+      var user = {
+        Username: document.getElementById('uf-username').value.trim(),
+        Password: document.getElementById('uf-password').value,
+        Name: document.getElementById('uf-name').value,
+        Role: document.getElementById('uf-role').value
+      };
+      var isEdit = !!originalUsername;
+      api(isEdit ? 'updateUser' : 'addUser', { user: user }).then(function (res) {
+        if (!res.success) { showAlert(res.message); return; }
+        document.getElementById('ssa-user-overlay').style.display = 'none';
+        api('getUsers').then(function (r) { state.users = r.data || []; renderUsers(); });
+      });
+    });
+
+    document.getElementById('ssa-email-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true; btn.textContent = 'পাঠানো হচ্ছে...';
+      api('sendReportEmail', {
+        toEmail: document.getElementById('ef-to').value.trim(),
+        subject: document.getElementById('ef-subject').value.trim()
+      }).then(function (res) {
+        btn.disabled = false; btn.textContent = 'পাঠান';
+        if (!res.success) { showAlert(res.message || 'পাঠানো যায়নি'); return; }
+        document.getElementById('ssa-email-overlay').style.display = 'none';
+        showAlert('রিপোর্ট পাঠানো হয়েছে।');
+      });
+    });
+
+    document.getElementById('btn-generate-month-report').addEventListener('click', function() {
+        var monthVal = document.getElementById('report-month-input').value;
+        if(!monthVal) { showAlert('অনুগ্রহ করে মাস নির্বাচন করুন'); return; }
+        
+        var btn = this;
+        btn.disabled = true;
+        var loadingMsg = document.getElementById('report-loading-msg');
+        loadingMsg.style.display = 'block';
+        
+        var monthBn = formatMonthBn(monthVal);
+        var results = [];
+        
+        state.members.forEach(function(m) {
+            var ledger = generateLedger(m, m.payments || []);
+            var entry = ledger.find(function(l) { return l.ym === monthVal; });
+            
+            if (entry) {
+                results.push(Object.assign({}, m, { 
+                    monthPaid: entry.paid, 
+                    monthFinePaid: entry.finePaid,
+                    monthDueAmt: entry.dueAmt,
+                    monthDueFine: entry.dueFine
+                }));
+            } else {
+                results.push(Object.assign({}, m, { monthPaid: 0, monthFinePaid: 0, monthDueAmt: 0, monthDueFine: 0 }));
+            }
+        });
+        
+        var totalColl = 0, totalFn = 0, totalDue = 0, totalDueFn = 0;
+        var rows = results.map(function(r) {
+            totalColl += r.monthPaid;
+            totalFn += r.monthFinePaid;
+            totalDue += r.monthDueAmt;
+            totalDueFn += r.monthDueFine;
+            
+            var amtHtml = r.monthPaid > 0 ? '৳' + money(r.monthPaid) : '—';
+            
+            var fineHtml = '—';
+            if (r.monthFinePaid > 0 && r.monthDueFine === 0) fineHtml = '৳' + money(r.monthFinePaid);
+            else if (r.monthFinePaid > 0 && r.monthDueFine > 0) fineHtml = 'জমা ৳' + money(r.monthFinePaid) + '<br><span style="color:#C0392B;font-weight:bold;">বকেয়া ৳' + money(r.monthDueFine) + '</span>';
+            else if (r.monthFinePaid === 0 && r.monthDueFine > 0) fineHtml = '<span style="color:#C0392B;font-weight:bold;">বকেয়া ৳' + money(r.monthDueFine) + '</span>';
+            
+            var dueHtml = r.monthDueAmt > 0 ? '<span style="color:#C0392B;font-weight:bold;">৳' + money(r.monthDueAmt) + '</span>' : '—';
+            
+            return '<tr><td class="ssa-en">' + esc(r.MemberNo) + '</td><td>' + esc(r.Name) + '</td><td class="ssa-en">' + (formatMobile(r.Mobile) || '—') + '</td><td>' + amtHtml + '</td><td>' + fineHtml + '</td><td>' + dueHtml + '</td></tr>';
+        }).join('');
+        
+        var totalDueStr = '৳' + money(totalDue);
+        if (totalDueFn > 0) totalDueStr += ' <span style="font-size:13px;color:#C0392B;">(+ জরিমানা: ৳' + money(totalDueFn) + ')</span>';
+        
+        var zone = document.getElementById('ssa-print-zone');
+        zone.innerHTML =
+          '<div class="ssa-stmt-tpl" id="pdf-monthly">' +
+            '<div class="ssa-stmt-head">' + SEAL_SVG + '<div><div class="t1">' + ORG_NAME + '</div><div class="t2">' + ORG_SUB + '</div></div></div>' +
+            '<div class="ssa-stmt-title">মাসিক হিসাব প্রতিবেদন — ' + monthBn + '</div>' +
+            '<div class="ssa-stmt-meta">' +
+              '<div><span class="k">মোট সদস্য:</span> ' + money(results.length) + ' জন</div>' +
+              '<div><span class="k">এই মাসে মোট জমা:</span> ৳' + money(totalColl) + '</div>' +
+              '<div><span class="k">এই মাসে মোট জরিমানা জমা:</span> ৳' + money(totalFn) + '</div>' +
+              '<div><span class="k">এই মাসে মোট বকেয়া:</span> ' + totalDueStr + '</div>' +
+            '</div>' +
+            '<table class="ssa-stmt-table"><thead><tr><th>সদস্য নং</th><th>নাম</th><th>মোবাইল</th><th>জমা (' + monthBn + ')</th><th>জরিমানা</th><th>বকেয়া</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+            '<div class="ssa-stmt-foot">' + ORG_NAME + ' — স্বয়ংক্রিয়ভাবে তৈরিকৃত প্রতিবেদন — ' + bnDate(new Date()) + '</div>' +
+          '</div>';
+        
+        loadingMsg.textContent = 'পিডিএফ প্রস্তুত করা হচ্ছে...';
+        
+        setTimeout(function() {
+            renderA4ToPdf('pdf-monthly', 'Monthly-Report-' + monthVal + '.pdf');
+            btn.disabled = false;
+            document.getElementById('ssa-month-report-overlay').style.display = 'none';
+        }, 800);
+    });
+  }
+
+  function openUserModal(u) {
+    document.getElementById('ssa-user-modal-title').textContent = u ? 'ইউজার এডিট' : 'নতুন ইউজার';
+    document.getElementById('uf-original-username').value = u ? u.Username : '';
+    document.getElementById('uf-username').value = u ? u.Username : '';
+    document.getElementById('uf-username').disabled = !!u;
+    document.getElementById('uf-password').value = '';
+    document.getElementById('uf-name').value = u ? u.Name : '';
+    document.getElementById('uf-role').value = u ? u.Role : 'Operator';
+    document.getElementById('ssa-user-overlay').style.display = 'flex';
+  }
+
+  function openEmailModal() {
+    document.getElementById('ef-to').value = '';
+    document.getElementById('ef-subject').value = '';
+    document.getElementById('ssa-email-overlay').style.display = 'flex';
+  }
+
+  function openMemberModal(m) {
+    document.getElementById('ssa-member-modal-title').textContent = m ? 'সদস্য তথ্য এডিট' : 'নতুন সদস্য';
+    document.getElementById('mf-id').value = m ? m.ID : '';
+    document.getElementById('mf-name').value = m ? m.Name : '';
+    document.getElementById('mf-no').value = m ? m.MemberNo : '';
+    document.getElementById('mf-mobile').value = m ? m.Mobile : '';
+    document.getElementById('mf-photo-file').value = '';
+    document.getElementById('mf-photo-status').textContent = '';
+    state.pendingPhotoDataUrl = null;
+    state.editingOriginalMemberNo = m ? m.MemberNo : null;
+    // Firestore থেকে আসা বিদ্যমান ছবি ট্র্যাক করা
+    state.editingMemberPhotoDataUrl = m ? (m.Photo || '') : '';
+    var mfPreview = document.getElementById('mf-photo-preview');
+    var existingPhoto = getMemberPhoto(m);
+    if (existingPhoto) { mfPreview.src = existingPhoto; mfPreview.style.display = 'inline-block'; }
+    else { mfPreview.src = ''; mfPreview.style.display = 'none'; }
+    document.getElementById('mf-installment').value = m ? m.InstallmentAmount : 1000;
+    document.getElementById('mf-dueday').value = m ? m.DueDay : 12;
+    document.getElementById('mf-fine').value = m ? m.FineAmount : 300;
+    document.getElementById('ssa-member-overlay').style.display = 'flex';
+  }
+
+  // --- নির্দিষ্ট মাসের কিস্তি পেমেন্ট মডাল ওপেন করা ---
+  window.openPaymentModalWithMonth = function(memId, ym) {
+      document.getElementById('ssa-statement-overlay').style.display = 'none';
+      var m = state.members.filter(function(x){ return String(x.ID) === String(memId); })[0];
+      if(m) {
+          openPaymentModal(m);
+          setTimeout(function() {
+              var sel = document.getElementById('pf-target-month');
+              if (sel) {
+                  sel.value = ym;
+                  if(sel.onchange) sel.onchange(); 
+              }
+          }, 100);
+      }
+  };
+
+  function openPaymentModal(m) {
+    document.getElementById('pay-member-name').textContent = m.Name;
+    document.getElementById('pf-member-id').value = m.ID;
+    
+    var targetSelect = document.getElementById('pf-target-month');
+    targetSelect.innerHTML = '';
+    
+    // Populate Due Months in Select dropdown
+    if (m.missingMonths && m.missingMonths.length > 0) {
+        m.missingMonths.forEach(function(mm) {
+            var opt = document.createElement('option');
+            opt.value = mm.ym;
+            var text = mm.monthName + ' (বকেয়া: ৳' + money(mm.dueAmt);
+            if (mm.dueFine > 0) text += ', জরিমানা: ৳' + money(mm.dueFine);
+            text += ')';
+            opt.textContent = text;
+            opt.dataset.amt = mm.dueAmt;
+            opt.dataset.fine = mm.dueFine;
+            targetSelect.appendChild(opt);
+        });
+    } else {
+        // Option for next/current month if no dues exist
+        var d = new Date();
+        var ym = d.getFullYear() + '-' + ((d.getMonth() + 1) < 10 ? '0' : '') + (d.getMonth() + 1);
+        var monthsList = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+        var opt = document.createElement('option');
+        opt.value = ym;
+        opt.textContent = monthsList[d.getMonth()] + ' ' + d.getFullYear() + ' (অগ্রিম/চলতি)';
+        opt.dataset.amt = m.InstallmentAmount;
+        opt.dataset.fine = 0;
+        targetSelect.appendChild(opt);
+    }
+    
+    function updateFields() {
+        var sel = targetSelect.options[targetSelect.selectedIndex];
+        if (sel) {
+            document.getElementById('pf-amount').value = sel.dataset.amt || m.InstallmentAmount;
+            document.getElementById('pf-fine').value = sel.dataset.fine || 0;
+        }
+    }
+    
+    targetSelect.onchange = updateFields;
+    updateFields(); 
+    
+    document.getElementById('pf-date').value = new Date().toISOString().substring(0, 10);
+    document.getElementById('pf-note').value = '';
+    document.getElementById('pf-error').style.display = 'none';
+    
+    document.getElementById('ssa-pay-overlay').style.display = 'flex';
+  }
+  
+  function deleteMemberConfirm(m) {
+    showConfirm(m.Name + ' — এই সদস্যকে মুছে ফেলতে চান?', function() {
+        api('deleteMember', { id: m.ID }).then(loadAll);
+    });
+  }
+
+  function openStatementModal(m) {
+      document.getElementById('stmt-member-name').textContent = m.Name;
+      document.getElementById('stmt-content-area').innerHTML = '<div class="ssa-loading">লোড হচ্ছে...</div>';
+      document.getElementById('ssa-statement-overlay').style.display = 'flex';
+      
+      var dlBtn = document.getElementById('stmt-download-btn');
+      dlBtn.onclick = function() { downloadMemberStatement(m); };
+
+      var payments = m.payments || [];
+      var ledger = generateLedger(m, payments);
+      
+      var rows = ledger.map(function(entry) {
+          var amtHtml = '';
+          if (entry.paid > 0 && entry.dueAmt === 0) amtHtml = '৳' + money(entry.paid);
+          else if (entry.paid > 0 && entry.dueAmt > 0) amtHtml = '৳' + money(entry.paid) + '<br><span style="color:var(--brick);font-size:13.5px;font-weight:600;">বকেয়া: ৳' + money(entry.dueAmt) + '</span>';
+          else amtHtml = '<span style="color:var(--brick);font-weight:600;">বকেয়া: ৳' + money(entry.dueAmt) + '</span>';
+          
+          var fineHtml = '';
+          if (entry.finePaid > 0 && entry.dueFine === 0) fineHtml = '৳' + money(entry.finePaid);
+          else if (entry.finePaid > 0 && entry.dueFine > 0) fineHtml = '৳' + money(entry.finePaid) + '<br><span style="color:var(--brick);font-size:13.5px;font-weight:600;">বকেয়া: ৳' + money(entry.dueFine) + '</span>';
+          else if (entry.finePaid === 0 && entry.dueFine > 0) fineHtml = '<span style="color:var(--brick);font-weight:600;">বকেয়া: ৳' + money(entry.dueFine) + '</span>';
+          else fineHtml = '—';
+          
+          var noteHtml = '';
+          if (entry.paid === 0) noteHtml = '<span style="color:var(--brick);font-weight:500;">পরিশোধ হয়নি</span>';
+          else if (entry.dueAmt === 0) noteHtml = entry.notes.join(', ') || '<span style="color:var(--teal);font-weight:500;">পরিশোধিত</span>';
+          else noteHtml = entry.notes.join(', ') || 'আংশিক পরিশোধিত';
+          
+          var dateHtml = entry.dates.length > 0 ? entry.dates.map(function(d){ return bnDate(d); }).join('<br>') : '—';
+          
+          var btnHtml = '—';
+          if (isAdmin()) {
+              if (entry.raw.length > 0) {
+                  btnHtml = entry.raw.map(function(p) {
+                      return '<div style="margin-bottom:4px; white-space:nowrap;">' +
+                             '<button class="ssa-btn-sm ssa-btn-ghost" style="padding:4px 8px;font-size:13px;" onclick="openEditPayment(\''+esc(encodeURIComponent(JSON.stringify(p)))+'\', \''+m.ID+'\')">এডিট</button> ' +
+                             '<button class="ssa-btn-sm ssa-btn-danger" style="padding:4px 8px;font-size:13px;" onclick="deletePaymentAction(\''+p.ID+'\', \''+m.ID+'\')">বাতিল</button>' +
+                             '</div>';
+                  }).join('');
+              } else if (entry.dueAmt > 0) {
+                  btnHtml = '<button class="ssa-btn-sm ssa-btn-primary" style="padding:6px 10px;font-size:13px;" onclick="openPaymentModalWithMonth(\''+m.ID+'\', \''+entry.ym+'\')">কিস্তি দিন</button>';
+              }
+          }
+
+          return '<tr>' +
+              '<td style="white-space:nowrap;font-weight:500;">' + entry.monthName + '</td>' +
+              '<td style="white-space:nowrap;">' + dateHtml + '</td>' +
+              '<td>' + amtHtml + '</td>' +
+              '<td>' + fineHtml + '</td>' +
+              '<td>' + noteHtml + '</td>' +
+              '<td style="text-align:center;">' + btnHtml + '</td>' +
+          '</tr>';
+      }).join('');
+      
+      var totalPaid = payments.reduce(function (s, p) { return s + Number(p.Amount||0); }, 0);
+      var totalFine = payments.reduce(function (s, p) { return s + Number(p.Fine||0); }, 0);
+      
+      var html = '<div class="ssa-table-wrap" style="max-height: 400px; overflow-y:auto;">' +
+         '<table class="ssa-table"><thead><tr><th>মাস</th><th>তারিখ</th><th>জমা</th><th>জরিমানা</th><th>মন্তব্য</th><th style="text-align:center;">কার্যক্রম</th></tr></thead>' +
+         '<tbody>' + rows + '</tbody></table>' +
+         '</div>' +
+         '<div class="ssa-stmt-summary">' +
+            '<div><span>মোট জমা</span><span>৳' + money(totalPaid) + '</span></div>' +
+            '<div><span>মোট জরিমানা</span><span>৳' + money(totalFine) + '</span></div>' +
+            '<div class="total"><span>সর্বমোট</span><span>৳' + money(totalPaid+totalFine) + '</span></div>' +
+         '</div>';
+      document.getElementById('stmt-content-area').innerHTML = html;
+  }
+
+  window.openEditPayment = function(payStrEnc, memId) {
+      var p = JSON.parse(decodeURIComponent(payStrEnc));
+      document.getElementById('epf-payment-id').value = p.ID;
+      document.getElementById('epf-member-id').value = memId;
+      document.getElementById('epf-month').value = paymentMonthKeyClient(p);
+      document.getElementById('epf-amount').value = p.Amount;
+      var d = new Date(p.Date);
+      var mth = ("0" + (d.getMonth() + 1)).slice(-2);
+      var day = ("0" + d.getDate()).slice(-2);
+      document.getElementById('epf-date').value = d.getFullYear()+"-"+mth+"-"+day;
+      document.getElementById('epf-fine').value = p.Fine || 0;
+      document.getElementById('epf-note').value = p.Note || '';
+      document.getElementById('ssa-edit-payment-overlay').style.display = 'flex';
+  };
+  
+  window.deletePaymentAction = function(payId, memId) {
+      showConfirm('আপনি কি নিশ্চিত যে এই কিস্তিটি বাতিল করতে চান?', function() {
+          document.getElementById('stmt-content-area').innerHTML = '<div class="ssa-loading">বাতিল হচ্ছে...</div>';
+          api('deletePayment', { paymentId: payId }).then(function(res) {
+              if(res.success) {
+                  // Full load again to reset states correctly
+                  api('getMembers').then(function(resMem){
+                      state.members = resMem.data || [];
+                      api('getPayments', { memberId: memId }).then(function(resPay){
+                          var updatedM = state.members.filter(function(x){ return x.ID == memId; })[0];
+                          if(updatedM) {
+                              updatedM.payments = resPay.data || [];
+                              calculateAllData();
+                              renderPage();
+                              openStatementModal(updatedM);
+                          }
+                      });
+                  });
+              } else {
+                  showAlert(res.message || 'বাতিল করা যায়নি।');
+                  var m = state.members.find(function(x){ return x.ID == memId; });
+                  if(m) openStatementModal(m); 
+              }
+          }).catch(function(){
+              showAlert('নেটওয়ার্ক সমস্যা, আবার চেষ্টা করুন।');
+          });
+      });
+  };
+
+  function buildIdCardHtml(m, idAttr) {
+    var photo = getMemberPhoto(m);
+    var imgSrc = photo ? esc(photo) : FALLBACK_AVATAR;
+    var sealSmall = SEAL_SVG.replace('viewBox="0 0 100 100"', 'viewBox="0 0 100 100" width="32" height="32"');
+
+    return (
+      '<div class="ssa-idcard-tpl"' + (idAttr ? ' id="' + idAttr + '"' : '') + '>' +
+        '<div class="idcard-header">' +
+          '<div class="idcard-header-left">' + sealSmall +
+            '<div style="min-width:0;">' +
+              '<div class="idcard-org">' + esc(ORG_NAME) + '</div>' +
+              '<div class="idcard-org-sub">' + esc(ORG_SUB) + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="idcard-header-right">' +
+            '<div class="idcard-card-type">সদস্য পরিচয়পত্র</div>' +
+            '<div class="idcard-card-type-en ssa-en">MEMBER ID CARD</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="idcard-body-land">' +
+          '<div class="idcard-photo-col">' +
+            '<div class="idcard-photo-frame"><img class="idcard-photo" src="' + imgSrc + '" referrerpolicy="no-referrer" crossorigin="anonymous"></div>' +
+            '<div class="idcard-memberno-chip ssa-en">' + esc(m.MemberNo) + '</div>' +
+          '</div>' +
+          '<div class="idcard-info-col">' +
+            '<div class="idcard-name-land">' + esc(m.Name) + '</div>' +
+            '<div class="idcard-name-sub">সদস্য • ' + esc(ORG_NAME) + '</div>' +
+            '<div class="idcard-fields">' +
+              '<div class="idcard-field"><div class="k">মোবাইল</div><div class="v ssa-en">' + (formatMobile(m.Mobile) || '—') + '</div></div>' +
+              '<div class="idcard-field"><div class="k">মাসিক কিস্তি</div><div class="v">৳' + money(m.InstallmentAmount) + '</div></div>' +
+              '<div class="idcard-field"><div class="k">মোট কিস্তির পরিমাণ</div><div class="v">৳' + money(m.totalPaid) + '</div></div>' +
+              '<div class="idcard-field"><div class="k">মোট জরিমানা</div><div class="v">৳' + money(m.totalFine) + '</div></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="idcard-footer-land">' +
+          '<div class="idcard-issue">কার্ড প্রদানের তারিখ: ' + bnDate(new Date()) + '</div>' +
+          '<div class="idcard-barcode"></div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function showProfileModal(m) {
+    if (!m) return;
+    var holder = document.getElementById('ssa-profile-card-holder');
+    holder.innerHTML = buildIdCardHtml(m, null);
+    var dlBtn = document.getElementById('ssa-profile-download-btn');
+    dlBtn.onclick = function () { downloadProfileCard(m); };
+    document.getElementById('ssa-profile-overlay').style.display = 'flex';
+  }
+
+  function downloadProfileCard(m) {
+    var zone = document.getElementById('ssa-print-zone');
+    zone.innerHTML = buildIdCardHtml(m, 'pdf-idcard');
+    var cardEl = document.getElementById('pdf-idcard');
+
+    waitForImages(cardEl).then(function () {
+      return html2canvas(cardEl, { scale: 3, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' });
+    }).then(function (canvas) {
+      var pageW = 85.6, pageH = pageW * (canvas.height / canvas.width);
+      var pdf = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: [pageW, pageH] });
+      var quality = 0.95; 
+      var imgData = canvas.toDataURL('image/jpeg', quality);
+      var approxKB = (imgData.length * 0.75) / 1024;
+      while (approxKB > 1000 && quality > 0.4) {
+        quality -= 0.05;
+        imgData = canvas.toDataURL('image/jpeg', quality);
+        approxKB = (imgData.length * 0.75) / 1024;
+      }
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageW, pageH, undefined, 'FAST');
+      pdf.save(esc(m.Name) + '-id-card.pdf');
+      zone.innerHTML = '';
+    }).catch(function () {
+      zone.innerHTML = '';
+      showAlert('আইডি কার্ড তৈরি করা যায়নি, আবার চেষ্টা করুন।');
+    });
+  }
+
+  function downloadMemberStatement(m) {
+    var payments = m.payments || [];
+    var ledger = generateLedger(m, payments);
+    
+    var rows = ledger.map(function(entry) {
+        var amtStr = '';
+        if (entry.paid > 0 && entry.dueAmt === 0) amtStr = '৳' + money(entry.paid);
+        else if (entry.paid > 0 && entry.dueAmt > 0) amtStr = 'জমা ৳' + money(entry.paid) + '\nবকেয়া ৳' + money(entry.dueAmt);
+        else amtStr = 'বকেয়া ৳' + money(entry.dueAmt);
+        
+        var fineStr = '';
+        if (entry.finePaid > 0 && entry.dueFine === 0) fineStr = '৳' + money(entry.finePaid);
+        else if (entry.finePaid > 0 && entry.dueFine > 0) fineStr = 'জমা ৳' + money(entry.finePaid) + '\nবকেয়া ৳' + money(entry.dueFine);
+        else if (entry.finePaid === 0 && entry.dueFine > 0) fineStr = 'বকেয়া ৳' + money(entry.dueFine);
+        else fineStr = '—';
+        
+        var noteStr = '';
+        if (entry.paid === 0) noteStr = 'পরিশোধ হয়নি';
+        else if (entry.dueAmt === 0) noteStr = entry.notes.join(', ') || 'পরিশোধিত';
+        else noteStr = entry.notes.join(', ') || 'আংশিক পরিশোধিত';
+        
+        var dateStr = entry.dates.length > 0 ? entry.dates.map(function(d){ return bnDate(d); }).join('\n') : '—';
+        
+        var colorizeAmt = entry.paid === 0 ? 'color:#C0392B;font-weight:bold;' : (entry.dueAmt > 0 ? 'font-weight:bold;' : '');
+        var colorizeFine = (entry.finePaid === 0 && entry.dueFine > 0) ? 'color:#C0392B;font-weight:bold;' : (entry.dueFine > 0 ? 'font-weight:bold;' : '');
+        var colorizeNote = entry.paid === 0 ? 'color:#C0392B;font-weight:bold;' : '';
+
+        return '<tr>' +
+            '<td style="white-space:nowrap;">' + entry.monthName + '</td>' +
+            '<td style="white-space:pre-wrap;">' + dateStr + '</td>' +
+            '<td style="white-space:pre-wrap;' + colorizeAmt + '">' + amtStr + '</td>' +
+            '<td style="white-space:pre-wrap;' + colorizeFine + '">' + fineStr + '</td>' +
+            '<td style="' + colorizeNote + '">' + noteStr + '</td>' +
+        '</tr>';
+    }).join('');
+    
+    var totalPaid = payments.reduce(function (s, p) { return s + Number(p.Amount||0); }, 0);
+    var totalFine = payments.reduce(function (s, p) { return s + Number(p.Fine||0); }, 0);
+
+    var zone = document.getElementById('ssa-print-zone');
+    zone.innerHTML =
+      '<div class="ssa-stmt-tpl" id="pdf-stmt">' +
+        '<div class="ssa-stmt-head">' + SEAL_SVG + '<div><div class="t1">' + ORG_NAME + '</div><div class="t2">' + ORG_SUB + '</div></div></div>' +
+        '<div class="ssa-stmt-title">সদস্য কিস্তি স্টেটমেন্ট</div>' +
+        '<div class="ssa-stmt-meta">' +
+          '<div><span class="k">নাম:</span> ' + esc(m.Name) + '</div>' +
+          '<div><span class="k">সদস্য নং:</span> <span class="ssa-en">' + esc(m.MemberNo) + '</span></div>' +
+          '<div><span class="k">মোবাইল:</span> <span class="ssa-en">' + (formatMobile(m.Mobile) || '—') + '</span></div>' +
+          '<div><span class="k">প্রতিবেদনের তারিখ:</span> ' + bnDate(new Date()) + '</div>' +
+        '</div>' +
+        '<table class="ssa-stmt-table"><thead><tr><th>মাস</th><th>তারিখ</th><th>জমার পরিমাণ</th><th>জরিমানা</th><th>মন্তব্য</th></tr></thead><tbody>' +
+          rows +
+        '</tbody></table>' +
+        '<div class="ssa-stmt-summary">' +
+          '<div><span>মোট জমা</span><span>৳' + money(totalPaid) + '</span></div>' +
+          '<div><span>মোট জরিমানা</span><span>৳' + money(totalFine) + '</span></div>' +
+          '<div class="total"><span>সর্বমোট</span><span>৳' + money(totalPaid+totalFine) + '</span></div>' +
+        '</div>' +
+        '<div class="ssa-stmt-foot">' + ORG_NAME + ' — স্বয়ংক্রিয়ভাবে তৈরিকৃত প্রতিবেদন</div>' +
+      '</div>';
+
+    renderA4ToPdf('pdf-stmt', esc(m.Name) + '-statement.pdf');
+  }
+
+  function renderA4ToPdf(elId, filename) {
+    var el = document.getElementById(elId);
+    waitForImages(el).then(function () {
+      return html2canvas(el, { scale: 3, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' });
+    }).then(function (canvas) {
+      var pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      var pageW = 210, pageH = 297;
+      var imgH = pageW * (canvas.height / canvas.width);
+
+      var quality = 0.95;
+      var imgData = canvas.toDataURL('image/jpeg', quality);
+      var approxKB = (imgData.length * 0.75) / 1024;
+      
+      while (approxKB > 1000 && quality > 0.4) {
+        quality -= 0.05;
+        imgData = canvas.toDataURL('image/jpeg', quality);
+        approxKB = (imgData.length * 0.75) / 1024;
+      }
+      
+      if (approxKB > 1200) {
+        var scaledCanvas = document.createElement('canvas');
+        var shrink = Math.sqrt(1200 / approxKB);
+        scaledCanvas.width = Math.max(1, Math.round(canvas.width * shrink));
+        scaledCanvas.height = Math.max(1, Math.round(canvas.height * shrink));
+        var ctx = scaledCanvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, scaledCanvas.width, scaledCanvas.height);
+        ctx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+        imgData = scaledCanvas.toDataURL('image/jpeg', 0.85);
+      }
+
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageW, Math.min(imgH, pageH), undefined, 'FAST');
+      pdf.save(filename);
+      document.getElementById('ssa-print-zone').innerHTML = '';
+    }).catch(function () {
+      document.getElementById('ssa-print-zone').innerHTML = '';
+      showAlert('প্রতিবেদন তৈরি করা যায়নি, আবার চেষ্টা করুন।');
+    });
+  }
+
+  // App initialization
+  var savedAuth = sessionStorage.getItem('ssa_auth');
+  if (savedAuth) {
+    try { state.auth = JSON.parse(savedAuth); renderApp(); }
+    catch (e) { renderLogin(); }
+  } else {
+    renderLogin();
+  }
+})();
+</script>
+</body>
+</html>
