@@ -40,11 +40,11 @@ export const UserModal: React.FC<UserModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim() || !name.trim()) {
-      alert('ইউজারনেম ও নাম দিন');
+      alert('Please enter username and name');
       return;
     }
     if (!user && !password.trim()) {
-      alert('নতুন ইউজারের জন্য পাসওয়ার্ড দিন');
+      alert('Please provide a password for new user');
       return;
     }
 
@@ -58,14 +58,14 @@ export const UserModal: React.FC<UserModalProps> = ({
       });
       onClose();
     } catch (err: any) {
-      alert('ইউজার সংরক্ষণ ব্যর্থ হয়েছে: ' + (err?.message || err));
+      alert('Failed to save user: ' + (err?.message || err));
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm font-sans">
       <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3">
@@ -73,10 +73,10 @@ export const UserModal: React.FC<UserModalProps> = ({
               <UserCheck className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-800">
-                {user ? 'ইউজার তথ্য এডিট' : 'নতুন ইউজার অ্যাকাউন্ট'}
+              <h2 className="text-base font-bold text-slate-800">
+                {user ? 'Edit User Account' : 'Create User Account'}
               </h2>
-              <p className="text-xs text-slate-500">ইউজার তৈরি বা রোল পরিবর্তন করুন</p>
+              <p className="text-xs text-slate-500">Assign role and permissions</p>
             </div>
           </div>
           <button
@@ -89,33 +89,33 @@ export const UserModal: React.FC<UserModalProps> = ({
 
         <form onSubmit={handleSubmit} className="mt-5 space-y-4">
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">ইউজারনেম (ইংরেজিতে) *</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-700">Username *</label>
             <input
               type="text"
               required
               disabled={!!user}
               value={username}
               onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
-              placeholder="যেমন: admin2"
+              placeholder="e.g. admin2"
               className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-mono focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 disabled:bg-slate-100"
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">পূর্ণ নাম *</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-700">Full Name *</label>
             <input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="যেমন: শেখ সোহেল"
+              placeholder="e.g. John Doe"
               className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">
-              পাসওয়ার্ড {user ? '(পরিবর্তন না করতে চাইলে খালি রাখুন)' : '*'}
+            <label className="mb-1 block text-xs font-semibold text-slate-700">
+              Password {user ? '(Leave blank to keep current)' : '*'}
             </label>
             <input
               type="password"
@@ -128,7 +128,7 @@ export const UserModal: React.FC<UserModalProps> = ({
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">অ্যাক্সেস রোল</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-700">Access Role</label>
             <div className="relative">
               <Shield className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
               <select
@@ -136,8 +136,8 @@ export const UserModal: React.FC<UserModalProps> = ({
                 onChange={(e) => setRole(e.target.value as 'Admin' | 'Operator')}
                 className="w-full rounded-lg border border-slate-300 pl-9 pr-3.5 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 bg-white"
               >
-                <option value="Admin">অ্যাডমিন (সকল কাজ ও কাস্টমাইজেশন করতে পারবে)</option>
-                <option value="Operator">মেম্বার / অপারেটর (শুধুমাত্র তথ্য দেখতে ও পিডিএফ নিতে পারবে)</option>
+                <option value="Admin">Administrator (Full Access & Customization)</option>
+                <option value="Operator">Member / Operator (View & Export PDF Only)</option>
               </select>
             </div>
           </div>
@@ -148,14 +148,14 @@ export const UserModal: React.FC<UserModalProps> = ({
               onClick={onClose}
               className="rounded-xl border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
             >
-              বাতিল
+              Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
               className="rounded-xl bg-teal-600 px-6 py-2 text-sm font-bold text-white shadow-md shadow-teal-600/30 hover:bg-teal-700 transition disabled:opacity-50"
             >
-              {saving ? 'সংরক্ষণ হচ্ছে...' : 'সংরক্ষণ করুন'}
+              {saving ? 'Saving...' : 'Save User'}
             </button>
           </div>
         </form>

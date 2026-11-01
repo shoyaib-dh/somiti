@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>সপ্তদশ সহযাত্রা - সঞ্চয় ও সদস্য ব্যবস্থাপনা</title>
+  <title>Shoptodash - Savings & Member Management Portal</title>
   
-  <!-- Safe window.fetch getter/setter wrapper to prevent iframe extension errors -->
   <script>
     (function() {
       try {
@@ -28,7 +27,7 @@
   </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.8/dist/html2canvas-pro.min.js"></script>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
@@ -45,342 +44,116 @@
     firebase.initializeApp(firebaseConfig);
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Tiro+Bangla&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
     body {
       margin: 0; padding: 0;
-      background: #F4F7FB;
+      background: #F8FAFC;
       min-height: 100vh;
       overflow-x: hidden;
-      font-family: 'Hind Siliguri', 'Tiro Bangla', 'Poppins', sans-serif;
+      font-family: 'Poppins', sans-serif;
+      color: #0F172A;
     }
 
     #ssa-root {
-      --bg:          #F4F7FB;
-      --bg2:         #EAF1F9;
-      --bg3:         #F5F8FC;
-      --card:        #FFFFFF;
-      --line:        rgba(13,148,136,0.14);
-      --glass-border:rgba(15,23,42,0.08);
-
-      --ink:         #0F172A;
-      --ink-soft:    #475569;
-      --ink-muted:   #94A3B8;
-
-      --primary:        #0D9488;    /* Premium Teal */
-      --primary-glow:   rgba(13,148,136,0.25);
-      --primary-deep:   #115E59;
-      --primary-bright: #14B8A6;
-
-      --sidebar-top:  #115E59;
-      --sidebar-bot:  #042F2E;
-
-      --accent:      #059669;
-      --gold:        #D97706;
-      --gold-soft:   rgba(217,119,6,0.12);
-      --gold-ink:    #B45309;
-
-      --danger:      #E11D48;
-      --danger-soft: rgba(225,29,72,0.12);
-      --success:     #10B981;
-
-      --glass-shadow: 0 20px 45px -18px rgba(15,23,42,0.15);
-
-      font-family: 'Hind Siliguri', 'Tiro Bangla', 'Poppins', sans-serif;
-      font-size: 16.5px;
-      line-height: 1.6;
-      color: var(--ink);
-      background: var(--bg);
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --primary: #0D9488;
+      --primary-dark: #115E59;
+      --danger: #E11D48;
+      width: 100%; height: 100vh;
+      display: flex; flex-direction: column;
     }
 
-    .ssa-en { font-family: 'Poppins', sans-serif; }
-    #ssa-root h1,#ssa-root h2,#ssa-root h3 { font-family: 'Hind Siliguri','Tiro Bangla','Poppins',sans-serif; }
-    #ssa-root button, #ssa-root input, #ssa-root select, #ssa-root textarea { font-family: inherit; }
-    #ssa-root button { cursor: pointer; }
-
-    /* Background glow */
-    body::before {
-      content:'';
-      position:fixed; inset:0; pointer-events:none; z-index:0;
-      background:
-        radial-gradient(ellipse 60% 50% at 15% 0%, rgba(13,148,136,.10), transparent),
-        radial-gradient(ellipse 50% 40% at 85% 100%, rgba(5,150,105,.08), transparent);
-    }
-
-    /* ── LOGIN ── */
-    .ssa-login-wrap {
-      flex: 1; display: flex; align-items: center; justify-content: center;
-      padding: 20px; position: relative; z-index: 1;
-    }
+    .ssa-login-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
     .ssa-login-card {
-      width: 100%; max-width: 410px; background: var(--card);
-      border: 1px solid var(--glass-border); border-radius: 24px;
-      padding: 42px 36px 36px; text-align: center;
-      box-shadow: var(--glass-shadow), 0 0 0 1px rgba(13,148,136,.1);
+      width: 100%; max-width: 400px; background: #fff;
+      border: 1px solid #E2E8F0; border-radius: 24px; padding: 40px 32px;
+      text-align: center; box-shadow: 0 20px 45px -15px rgba(15,23,42,0.15);
     }
-    .ssa-seal { width: 76px; height: 76px; margin: 0 auto 16px; }
-    .ssa-login-card h1 {
-      font-size: 25px; margin: 0 0 4px;
-      background: linear-gradient(135deg, #0D9488 0%, #115E59 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .ssa-login-sub { color: var(--ink-soft); font-size: 14.5px; margin: 0 0 24px; font-weight: 500; }
     .ssa-field { text-align: left; margin-bottom: 15px; }
-    .ssa-field label { display: block; font-size: 13.5px; color: var(--ink-soft); margin-bottom: 6px; font-weight: 600; }
-    .ssa-field input, .ssa-field textarea, .ssa-field select {
-      width: 100%; padding: 10px 14px; border: 1px solid #CBD5E1;
-      border-radius: 10px; font-size: 15.5px; background: #F8FAFC; color: var(--ink);
-      transition: border .2s, background .2s;
-    }
-    .ssa-field input:focus, .ssa-field textarea:focus, .ssa-field select:focus {
-      outline: none; border-color: var(--primary); background: #FFFFFF;
-      box-shadow: 0 0 0 3px rgba(13,148,136,0.15);
+    .ssa-field label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; text-transform: uppercase; }
+    .ssa-field input, .ssa-field select {
+      width: 100%; padding: 10px 14px; border: 1px solid #CBD5E1; border-radius: 10px; font-size: 14px;
     }
     .ssa-login-btn {
-      width: 100%; padding: 12px; border: none; border-radius: 12px; margin-top: 8px;
-      background: linear-gradient(135deg, #0D9488 0%, #115E59 100%);
-      color: #fff; font-weight: 700; font-size: 17px;
-      box-shadow: 0 8px 20px -4px rgba(13,148,136,.4);
-      transition: transform .15s, box-shadow .15s;
-    }
-    .ssa-login-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px -6px rgba(13,148,136,.55); }
-    .ssa-login-error { color: var(--danger); font-size: 14px; margin-top: 12px; min-height: 16px; font-weight: 600; }
-
-    /* ── SHELL & SIDEBAR ── */
-    .ssa-app { display: none; flex: 1; flex-direction: column; height: 100vh; overflow: hidden; position: relative; z-index: 1; }
-    .ssa-shell { display: flex; flex: 1; height: 100vh; overflow: hidden; }
-
-    .ssa-sidebar {
-      width: 260px; flex-shrink: 0;
-      background: linear-gradient(190deg, var(--sidebar-top) 0%, var(--sidebar-bot) 100%);
-      padding: 22px 14px; display: flex; flex-direction: column; z-index: 10;
-      position: relative; box-shadow: 4px 0 24px -8px rgba(4,47,46,.4);
-    }
-    .ssa-brand {
-      display: flex; align-items: center; gap: 11px;
-      margin-bottom: 24px; padding: 4px 8px 16px;
-      border-bottom: 1px solid rgba(255,255,255,.14);
-    }
-    .ssa-brand svg { width: 34px; height: 34px; flex-shrink: 0; }
-    .ssa-brand-text { font-size: 17px; line-height: 1.3; font-weight: 700; color: #FFFFFF; }
-    .ssa-brand-sub { font-size: 11.5px; color: rgba(255,255,255,.68); font-weight: 500; }
-
-    .ssa-nav { display: flex; flex-direction: column; gap: 4px; }
-    .ssa-nav button {
-      display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
-      padding: 10px 14px; border: none; background: transparent;
-      color: rgba(255,255,255,.75); border-radius: 10px; font-size: 15px;
-      transition: all .2s; font-weight: 600;
-    }
-    .ssa-nav button svg { width: 18px; height: 18px; flex-shrink: 0; opacity: .9; }
-    .ssa-nav button:hover { background: rgba(255,255,255,.10); color: #fff; }
-    .ssa-nav button.active {
-      background: rgba(255,255,255,.18); color: #fff; font-weight: 700;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.15);
-    }
-
-    .ssa-user-info {
-      margin-top: auto; font-size: 13.5px; color: rgba(255,255,255,.6);
-      padding: 12px 10px 8px; border-top: 1px solid rgba(255,255,255,.14);
-      margin-bottom: 8px; display: flex; align-items: center; gap: 10px;
-    }
-    .ssa-user-info .ssa-user-avatar {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: bold;
-    }
-    .ssa-user-info strong { display: block; color: #fff; font-size: 14px; }
-
-    .ssa-logout {
-      background: rgba(225,29,72,.18); border: 1px solid rgba(225,29,72,.35);
-      border-radius: 10px; padding: 9px; font-size: 14px; color: #FFE4E6;
-      font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: all .2s;
-    }
-    .ssa-logout:hover { background: rgba(225,29,72,.30); }
-
-    /* ── MAIN CONTENT ── */
-    .ssa-main {
-      flex: 1; padding: 26px 32px; overflow-y: auto; overflow-x: hidden;
-      background: var(--bg); height: 100%;
-    }
-    .ssa-page-title { font-size: 26px; color: var(--ink); margin: 0 0 4px; font-weight: 700; }
-    .ssa-page-sub { color: var(--ink-soft); font-size: 14.5px; margin: 0 0 22px; font-weight: 500; }
-
-    /* ── STATS ── */
-    .ssa-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 24px; }
-    .ssa-stat {
-      background: var(--card); border: 1px solid var(--glass-border); border-radius: 16px;
-      padding: 18px 20px; box-shadow: 0 4px 18px -8px rgba(15,23,42,0.08);
-      transition: transform .2s, box-shadow .2s;
-    }
-    .ssa-stat:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -8px rgba(15,23,42,0.14); }
-    .ssa-stat-icon {
-      width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
-      background: var(--primary-glow); color: var(--primary); margin-bottom: 12px;
-    }
-    .ssa-stat.warn .ssa-stat-icon { background: var(--danger-soft); color: var(--danger); }
-    .ssa-stat-label { font-size: 13px; color: var(--ink-soft); margin-bottom: 4px; font-weight: 600; }
-    .ssa-stat-value { font-size: 23px; font-weight: 800; color: var(--ink); }
-    .ssa-stat.warn .ssa-stat-value { color: var(--danger); }
-
-    /* ── BUTTONS ── */
-    .ssa-btn {
-      border: none; border-radius: 10px; padding: 9px 16px;
-      font-size: 15px; font-weight: 600; cursor: pointer; transition: all .2s;
-      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-    }
-    .ssa-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
-    .ssa-btn-primary {
+      width: 100%; padding: 12px; border: none; border-radius: 12px;
       background: linear-gradient(135deg, #0D9488, #115E59); color: #fff;
-      box-shadow: 0 4px 12px -3px rgba(13,148,136,.5);
+      font-weight: 700; font-size: 15px; cursor: pointer; text-transform: uppercase;
     }
-    .ssa-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px -3px rgba(13,148,136,.65); }
-    .ssa-btn-ghost { background: #FFFFFF; border: 1px solid #CBD5E1; color: var(--ink-soft); }
-    .ssa-btn-ghost:hover { background: #F1F5F9; color: var(--ink); border-color: #94A3B8; }
-    .ssa-btn-gold { background: var(--gold-soft); color: var(--gold-ink); border: 1px solid rgba(217,119,6,.25); }
-    .ssa-btn-gold:hover { background: rgba(217,119,6,.22); }
-    .ssa-btn-danger { background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(225,29,72,.2); }
-    .ssa-btn-danger:hover { background: rgba(225,29,72,.22); }
-    .ssa-btn-sm { padding: 5px 11px; font-size: 13.5px; border-radius: 8px; }
 
-    /* ── TABLE ── */
-    .ssa-table-wrap {
-      background: var(--card); border: 1px solid var(--glass-border); border-radius: 16px;
-      overflow-x: auto; -webkit-overflow-scrolling: touch; box-shadow: 0 4px 18px -8px rgba(15,23,42,0.06);
+    .ssa-shell { display: flex; flex: 1; height: 100vh; overflow: hidden; }
+    .ssa-sidebar {
+      width: 250px; background: linear-gradient(190deg, #115E59 0%, #042F2E 100%);
+      padding: 20px 14px; display: flex; flex-direction: column; color: #fff; flex-shrink: 0;
     }
-    table.ssa-table { width: 100%; min-width: 800px; border-collapse: collapse; font-size: 15px; }
-    table.ssa-table th {
-      text-align: left; background: #F8FAFC; color: #334155; font-weight: 700;
-      padding: 12px 14px; font-size: 13.5px; border-bottom: 1px solid #E2E8F0;
+    .ssa-nav button {
+      display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+      padding: 10px 12px; border: none; background: transparent; color: #CCFBF1;
+      border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; text-transform: uppercase;
     }
-    table.ssa-table td { padding: 11px 14px; border-top: 1px solid #F1F5F9; vertical-align: middle; }
-    table.ssa-table tr:hover td { background: #F8FAFC; }
+    .ssa-nav button.active { background: rgba(255,255,255,0.18); color: #fff; font-weight: 700; }
+    .ssa-main { flex: 1; padding: 24px 32px; overflow-y: auto; }
 
-    .ssa-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #CBD5E1; }
-    .ssa-pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 13px; font-weight: 700; }
-    .ssa-pill.gold { background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0; }
-    .ssa-pill.brick { background: #FFF1F2; color: #BE123C; border: 1px solid #FECDD3; }
+    .ssa-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .ssa-stat { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; padding: 18px 20px; box-shadow: 0 4px 15px -5px rgba(0,0,0,0.05); }
+    .ssa-stat-label { font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; }
+    .ssa-stat-value { font-size: 22px; font-weight: 800; color: #0F172A; margin-top: 4px; }
 
-    /* ══════════════════════════════════════════════════════════
-       ✨ VERTICAL LANYARD-STYLE PORTRAIT ID CARD (AS IN SCREENSHOT)
-    ══════════════════════════════════════════════════════════ */
+    .ssa-btn {
+      border: none; border-radius: 10px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .ssa-btn-primary { background: #0D9488; color: #fff; }
+    .ssa-btn-ghost { background: #fff; border: 1px solid #CBD5E1; color: #475569; }
+
+    .ssa-table-wrap { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow-x: auto; }
+    table.ssa-table { width: 100%; min-width: 800px; border-collapse: collapse; font-size: 13px; }
+    table.ssa-table th { text-align: left; background: #F8FAFC; color: #475569; font-weight: 700; padding: 12px; text-transform: uppercase; font-size: 11px; }
+    table.ssa-table td { padding: 12px; border-top: 1px solid #F1F5F9; }
+
+    /* Vertical ID Card */
     .ssa-vertical-card-wrap {
       width: 320px; height: 520px; background: #FFFFFF; border-radius: 16px;
       position: relative; overflow: hidden; display: flex; flex-direction: column;
       box-shadow: 0 20px 45px -10px rgba(15,23,42,0.25), 0 0 0 1px rgba(0,0,0,0.08);
-      font-family: 'Hind Siliguri', 'Poppins', sans-serif;
+      border: 1px solid #E2E8F0;
     }
-    .v-id-watermark {
-      position: absolute; inset: 0; pointer-events: none; opacity: 0.035;
-      background-image: radial-gradient(#0D9488 1.5px, transparent 1.5px);
-      background-size: 14px 14px;
-    }
-    .v-id-top {
-      position: relative; z-index: 2; padding: 18px 16px 6px; text-align: center;
-    }
-    .v-id-logo-icon {
-      width: 38px; height: 38px; margin: 0 auto 5px; border-radius: 50%;
-      background: linear-gradient(135deg, #0D9488, #115E59);
-      display: flex; align-items: center; justify-content: center; color: #fff;
-      box-shadow: 0 4px 10px rgba(13,148,136,0.3);
-    }
-    .v-id-org-title { font-size: 17px; font-weight: 800; color: #0F172A; line-height: 1.2; margin: 0; }
-    .v-id-org-sub { font-size: 10px; font-weight: 600; text-transform: uppercase; color: #64748B; letter-spacing: .08em; margin-top: 1px; }
+    .v-id-top { position: relative; z-index: 2; padding: 18px 16px 4px; text-align: center; }
+    .v-id-org-title { font-size: 15px; font-weight: 800; color: #0F172A; line-height: 1.2; margin: 0; text-transform: uppercase; }
+    .v-id-org-sub { font-size: 9.5px; font-weight: 600; text-transform: uppercase; color: #64748B; letter-spacing: .08em; margin-top: 2px; }
 
-    /* Curved Wings Middle Section (Exact Match to Screenshot!) */
-    .v-id-mid {
-      position: relative; height: 136px; margin: 6px 0;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .v-id-wing-left {
-      position: absolute; left: 0; top: 0; height: 100%; width: 45%;
-    }
-    .v-id-wing-right {
-      position: absolute; right: 0; top: 0; height: 100%; width: 45%;
-    }
+    .v-id-mid { position: relative; height: 142px; margin: 4px 0; display: flex; align-items: center; justify-content: center; }
     .v-id-photo-frame {
-      position: relative; z-index: 3; width: 114px; height: 114px; border-radius: 50%;
+      position: relative; z-index: 3; width: 116px; height: 116px; border-radius: 50%;
       background: #FFFFFF; padding: 4px; box-shadow: 0 8px 24px -4px rgba(13,148,136,0.35);
-      display: flex; align-items: center; justify-content: center;
     }
-    .v-id-photo-inner {
-      width: 100%; height: 100%; border-radius: 50%; overflow: hidden;
-      border: 3px solid #0D9488;
-    }
+    .v-id-photo-inner { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; border: 3px solid #0D9488; }
     .v-id-photo-inner img { width: 100%; height: 100%; object-fit: cover; }
 
-    .v-id-name-sec { position: relative; z-index: 2; text-align: center; padding: 0 16px; }
-    .v-id-name { font-size: 19px; font-weight: 800; color: #0F172A; line-height: 1.2; }
-    .v-id-role { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #0D9488; letter-spacing: .05em; margin-top: 1px; }
+    .v-id-name { font-size: 18px; font-weight: 800; color: #0F172A; line-height: 1.2; text-align: center; text-transform: uppercase; }
+    .v-id-role { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #0D9488; letter-spacing: .08em; text-align: center; }
 
-    .v-id-details {
-      position: relative; z-index: 2; margin: 10px 22px 0; background: #F8FAFC;
-      border: 1px solid #F1F5F9; border-radius: 12px; padding: 9px 14px;
-    }
-    .v-id-table { width: 100%; font-size: 12px; border-collapse: separate; border-spacing: 0 3px; }
-    .v-id-table td.k { width: 42%; font-weight: 600; color: #64748B; font-size: 10.5px; text-transform: uppercase; }
-    .v-id-table td.sep { width: 6%; color: #94A3B8; font-weight: bold; }
+    .v-id-details { margin: 8px 20px 0; background: #F8FAFC; border: 1px solid #F1F5F9; border-radius: 12px; padding: 9px 12px; }
+    .v-id-table { width: 100%; font-size: 11px; border-collapse: separate; border-spacing: 0 3px; }
+    .v-id-table td.k { width: 42%; font-weight: 600; color: #64748B; font-size: 9.5px; text-transform: uppercase; }
+    .v-id-table td.sep { width: 6%; color: #94A3B8; font-bold; }
     .v-id-table td.v { font-weight: 700; color: #0F172A; }
 
     .v-id-footer {
-      position: absolute; bottom: 0; left: 0; right: 0; height: 36px;
+      position: absolute; bottom: 0; left: 0; right: 0; height: 32px;
       background: linear-gradient(135deg, #0D9488, #115E59);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 18px; color: #fff; font-size: 9px;
+      padding: 0 16px; color: #fff; font-size: 8.5px; font-weight: 700; text-transform: uppercase;
     }
-    .v-id-barcode {
-      width: 90px; height: 14px; opacity: 0.85;
-      background: repeating-linear-gradient(90deg, #FFFFFF 0 2px, transparent 2px 5px);
-    }
+    .v-id-barcode { width: 90px; height: 12px; opacity: 0.85; background: repeating-linear-gradient(90deg, #FFFFFF 0 2px, transparent 2px 5px); }
 
-    /* ── MODALS ── */
-    .ssa-overlay {
-      display: none; position: fixed; inset: 0; background: rgba(15,23,42,.75);
-      z-index: 9999; align-items: center; justify-content: center; padding: 16px;
-      backdrop-filter: blur(4px);
-    }
-    .ssa-modal {
-      background: #FFFFFF; border-radius: 20px; width: 100%; max-width: 480px;
-      padding: 28px; max-height: 92vh; overflow-y: auto;
-      box-shadow: 0 25px 60px -15px rgba(15,23,42,0.3);
-    }
-    .ssa-modal h3 { margin: 0 0 18px; font-size: 20px; font-weight: 700; color: #0F172A; }
-    .ssa-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
-
+    .ssa-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,.75); z-index: 9999; align-items: center; justify-content: center; padding: 16px; }
+    .ssa-modal { background: #fff; border-radius: 20px; width: 100%; max-width: 460px; padding: 26px; max-height: 90vh; overflow-y: auto; }
     #ssa-print-zone { position: fixed; left: -9999px; top: 0; }
-
-    /* Mobile */
-    @media (max-width: 768px) {
-      .ssa-shell { flex-direction: column; }
-      .ssa-sidebar {
-        width: 100%; flex-direction: row; justify-content: space-between; align-items: center;
-        padding: 10px 16px;
-      }
-      .ssa-brand { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-      .ssa-user-info { display: none; }
-      .ssa-nav {
-        position: fixed; bottom: 0; left: 0; right: 0; background: #FFFFFF;
-        flex-direction: row; justify-content: space-around; padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
-        z-index: 1000; border-top: 1px solid #E2E8F0; box-shadow: 0 -4px 20px rgba(0,0,0,.08);
-      }
-      .ssa-nav button {
-        flex-direction: column; gap: 2px; padding: 5px 3px; font-size: 11px;
-        color: #64748B; text-align: center; justify-content: center;
-      }
-      .ssa-nav button.active { background: #CCFBF1; color: #0D9488; }
-      .ssa-main { padding: 16px 14px 100px 14px; }
-      .ssa-stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-      #ssa-profile-card-holder { transform: scale(0.72); transform-origin: top center; margin-bottom: -110px; }
-    }
   </style>
 </head>
 <body>
@@ -390,174 +163,71 @@
 
 <script>
 (function() {
-  // Settings with fallback to Firestore/Local
   var settings = {
-    orgName: 'সপ্তদশ সহযাত্রা',
-    orgSub: 'সঞ্চয় ও ঋণদান সমবায় সমিতি',
-    phone: '01712-345678',
+    orgName: 'SHOPTODASH SOHOJATRA',
+    orgSub: 'Savings & Credit Co-operative Society',
+    phone: '+880 1712-345678',
     email: 'info@shoptodash.org',
-    address: 'বাগমারা, রাজশাহী, বাংলাদেশ',
+    address: 'Bagmara, Rajshahi, Bangladesh',
     cardTheme: 'teal',
     defaultInstallment: 1000,
     defaultDueDay: 12,
-    defaultFine: 300,
-    registrationNo: 'রেজিঃ ১৭/২০২৬'
+    defaultFine: 300
   };
 
   var db = firebase.firestore();
   var auth = firebase.auth();
   var authReady = new Promise(function(resolve) {
     auth.onAuthStateChanged(function(u) {
-      if (u) { resolve(u); }
-      else { auth.signInAnonymously().then(function(c){ resolve(c.user); }).catch(function(){ resolve(null); }); }
+      if (u) resolve(u);
+      else auth.signInAnonymously().then(function(c){ resolve(c.user); }).catch(function(){ resolve(null); });
     });
   });
 
-  var state = {
-    members: [], dueMembers: [], users: [], dashboard: null,
-    page: 'dashboard', auth: null,
-    pagination: { members: 1, due: 1, dashDue: 1 }
-  };
-
+  var state = { members: [], dueMembers: [], dashboard: null, page: 'dashboard', auth: null };
   var FALLBACK_AVATAR = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%230d9488%22%3E%3Cpath%20d%3D%22M12%2012c2.21%200%204-1.79%204-4s-1.79-4-4-4-4%201.79-4%204%201.79%204%204%204zm0%202c-2.67%200-8%201.34-8%204v2h16v-2c0-2.66-5.33-4-8-4z%22%2F%3E%3C%2Fsvg%3E';
 
   function esc(s){ return (s===undefined||s===null)?'':String(s); }
-  function money(n){ return Number(n||0).toLocaleString('bn-BD'); }
-  function bnDate(d){
-    if(!d) return '—';
-    var dt = new Date(d);
-    return isNaN(dt)?esc(d):dt.toLocaleDateString('bn-BD', {year:'numeric', month:'long', day:'numeric'});
-  }
-  function formatMobile(m){
-    var digits = String(m||'').replace(/\D/g,'');
-    if(!digits) return '';
-    if(digits.indexOf('880')===0) digits = digits.substring(3);
-    if(digits.indexOf('0')!==0) digits = '0'+digits;
+  function money(n){ return Number(n||0).toLocaleString('en-US'); }
+
+  function toWhatsApp(mobile) {
+    if (!mobile) return null;
+    var digits = String(mobile).replace(/\D/g, '');
+    if (!digits) return null;
+    if (digits.startsWith('0') && digits.length === 11) digits = '88' + digits;
     return digits;
   }
 
-  // Load custom settings from Firestore
-  authReady.then(function() {
-    db.collection('settings').doc('org_settings').get().then(function(doc) {
-      if (doc.exists) {
-        var d = doc.data();
-        Object.assign(settings, d);
-      }
-    }).catch(function(){});
-  });
-
-  // Ledger generator
-  function generateLedger(m, payments) {
-    var startYear = 2026, startMonth = 1;
-    var now = new Date();
-    var currYear = now.getFullYear(), currMonth = now.getMonth() + 1, today = now.getDate();
-    var dueDay = Number(m.DueDay || settings.defaultDueDay || 12);
-    var installment = Number(m.InstallmentAmount || settings.defaultInstallment || 1000);
-    var fineRate = Number(m.FineAmount || settings.defaultFine || 300);
-    var monthsList = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
-
-    var payMap = {};
-    (payments || []).forEach(function(p) {
-      var d = new Date(p.Date);
-      var ym = (p.Month && p.Month.length >= 7) ? p.Month.substring(0,7) : (d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2));
-      if (!payMap[ym]) payMap[ym] = { paid: 0, finePaid: 0, dates: [], notes: [], raw: [] };
-      payMap[ym].paid += Number(p.Amount || 0);
-      payMap[ym].finePaid += Number(p.Fine || 0);
-      if (p.Date) payMap[ym].dates.push(p.Date);
-      if (p.Note) payMap[ym].notes.push(p.Note);
-      payMap[ym].raw.push(p);
-    });
-
-    var allYm = new Set(Object.keys(payMap));
-    var y = startYear, mo = startMonth, guard = 1200;
-    while(guard-- > 0) {
-      allYm.add(y + '-' + ('0'+mo).slice(-2));
-      if (y === currYear && mo === currMonth) break;
-      mo++; if (mo > 12) { mo = 1; y++; }
-    }
-
-    var sortedYm = Array.from(allYm).sort();
-    var ledger = [];
-    sortedYm.forEach(function(ym) {
-      var parts = ym.split('-');
-      var pY = parseInt(parts[0]), pM = parseInt(parts[1]);
-      var mName = monthsList[pM-1] + ' ' + pY;
-      var expected = (ym === '2026-01') ? 500 : installment;
-      var isPastDue = (pY < currYear) || (pY === currYear && pM < currMonth) || (pY === currYear && pM === currMonth && today > dueDay);
-      var pData = payMap[ym] || { paid: 0, finePaid: 0, dates: [], notes: [], raw: [] };
-      var dueAmt = Math.max(0, expected - pData.paid);
-      var dueFine = (dueAmt > 0 && isPastDue) ? Math.max(0, fineRate - pData.finePaid) : 0;
-      ledger.push({
-        ym: ym, monthName: mName, expected: expected,
-        paid: pData.paid, finePaid: pData.finePaid,
-        dueAmt: dueAmt, dueFine: dueFine, isPastDue: isPastDue,
-        dates: pData.dates, notes: pData.notes, raw: pData.raw
-      });
-    });
-    return ledger;
-  }
-
-  function calculateAllData() {
-    var globalPaid = 0, globalFine = 0;
-    state.dueMembers = [];
-    state.members.forEach(function(m) {
-      var ledger = generateLedger(m, m.payments || []);
-      var mPaid = 0, mFine = 0, missing = [], dueAmt = 0, dueFine = 0;
-      ledger.forEach(function(entry) {
-        mPaid += entry.paid; mFine += entry.finePaid;
-        if (entry.dueAmt > 0 || entry.dueFine > 0) {
-          missing.push(entry);
-          dueAmt += entry.dueAmt; dueFine += entry.dueFine;
-        }
-      });
-      m.totalPaid = mPaid; m.totalFine = mFine;
-      m.dueAmount = dueAmt; m.dueFineAmount = dueFine;
-      m.missingMonths = missing;
-      globalPaid += mPaid; globalFine += mFine;
-      if (dueAmt > 0 || dueFine > 0) state.dueMembers.push(m);
-    });
-    state.dashboard = {
-      totalMembers: state.members.length,
-      totalCollected: globalPaid,
-      totalFineCollected: globalFine,
-      duesAmount: state.dueMembers.reduce(function(s,m){ return s + m.dueAmount; }, 0),
-      duesFine: state.dueMembers.reduce(function(s,m){ return s + m.dueFineAmount; }, 0),
-      duesCount: state.dueMembers.length
-    };
-  }
-
-  // ✨ BUILD VERTICAL ID CARD HTML (Portrait, matching screenshot!)
   function buildVerticalIdCardHtml(m) {
     var photoSrc = m.Photo || FALLBACK_AVATAR;
     return (
       '<div class="ssa-vertical-card-wrap" id="v-card-element">' +
-        '<div class="v-id-watermark"></div>' +
         '<div class="v-id-top">' +
-          '<div class="v-id-logo-icon">' +
-            '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>' +
+          '<div style="width:34px; height:34px; margin:0 auto 4px; border-radius:50%; background:#0D9488; display:flex; align-items:center; justify-content:center; color:#fff;">' +
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>' +
           '</div>' +
           '<h2 class="v-id-org-title">' + esc(settings.orgName) + '</h2>' +
           '<p class="v-id-org-sub">' + esc(settings.orgSub) + '</p>' +
         '</div>' +
         '<div class="v-id-mid">' +
-          '<svg class="v-id-wing-left" viewBox="0 0 144 144" preserveAspectRatio="none"><path d="M0,20 C50,20 90,60 120,72 C90,84 50,124 0,124 Z" fill="#0D9488"/></svg>' +
-          '<svg class="v-id-wing-right" viewBox="0 0 144 144" preserveAspectRatio="none"><path d="M144,20 C94,20 54,60 24,72 C54,84 94,124 144,124 Z" fill="#0D9488"/></svg>' +
+          '<svg style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;" viewBox="0 0 320 142" fill="none">' +
+            '<path d="M 0 22 L 78 22 C 102 22 122 44 126 71 C 122 98 102 120 78 120 L 0 120 Z" fill="#0D9488"/>' +
+            '<path d="M 320 22 L 242 22 C 218 22 198 44 194 71 C 198 98 218 120 242 120 L 320 120 Z" fill="#0D9488"/>' +
+          '</svg>' +
           '<div class="v-id-photo-frame">' +
             '<div class="v-id-photo-inner"><img src="' + photoSrc + '" crossorigin="anonymous"></div>' +
           '</div>' +
         '</div>' +
-        '<div class="v-id-name-sec">' +
-          '<div class="v-id-name">' + esc(m.Name) + '</div>' +
-          '<div class="v-id-role">সম্মানিত সদস্য • MEMBER</div>' +
-        '</div>' +
+        '<div class="v-id-name">' + esc(m.Name) + '</div>' +
+        '<div class="v-id-role">HONORARY MEMBER</div>' +
         '<div class="v-id-details">' +
           '<table class="v-id-table">' +
-            '<tr><td class="k">সদস্য নং</td><td class="sep">:</td><td class="v ssa-en">' + esc(m.MemberNo) + '</td></tr>' +
-            '<tr><td class="k">মোবাইল</td><td class="sep">:</td><td class="v ssa-en">' + (formatMobile(m.Mobile)||'—') + '</td></tr>' +
-            (m.BloodGroup ? '<tr><td class="k">রক্তের গ্রুপ</td><td class="sep">:</td><td class="v" style="color:#E11D48;">' + esc(m.BloodGroup) + '</td></tr>' : '') +
-            '<tr><td class="k">মাসিক কিস্তি</td><td class="sep">:</td><td class="v" style="color:#0D9488;">৳' + money(m.InstallmentAmount) + '</td></tr>' +
-            '<tr><td class="k">মোট সঞ্চয়</td><td class="sep">:</td><td class="v" style="color:#4F46E5;">৳' + money(m.totalPaid) + '</td></tr>' +
-            '<tr><td class="k">ইস্যু তারিখ</td><td class="sep">:</td><td class="v">' + bnDate(new Date()) + '</td></tr>' +
+            '<tr><td class="k">MEMBER ID</td><td class="sep">:</td><td class="v">' + esc(m.MemberNo) + '</td></tr>' +
+            '<tr><td class="k">MOBILE</td><td class="sep">:</td><td class="v">' + esc(m.Mobile || '—') + '</td></tr>' +
+            (m.BloodGroup ? '<tr><td class="k">BLOOD GROUP</td><td class="sep">:</td><td class="v" style="color:#E11D48;">' + esc(m.BloodGroup) + '</td></tr>' : '') +
+            '<tr><td class="k">INSTALLMENT</td><td class="sep">:</td><td class="v" style="color:#0D9488;">৳ ' + money(m.InstallmentAmount) + '</td></tr>' +
+            '<tr><td class="k">TOTAL SAVINGS</td><td class="sep">:</td><td class="v" style="color:#4F46E5;">৳ ' + money(m.totalPaid || 0) + '</td></tr>' +
+            '<tr><td class="k">ISSUE DATE</td><td class="sep">:</td><td class="v">' + (new Date().toLocaleDateString('en-US')) + '</td></tr>' +
           '</table>' +
         '</div>' +
         '<div class="v-id-footer">' +
@@ -569,66 +239,59 @@
     );
   }
 
-  // ✨ DOWNLOAD ALL MEMBERS DATA MASTER PDF
+  // Export Master PDF using html2canvas-pro
   window.downloadAllMembersPdf = function() {
     var zone = document.getElementById('ssa-print-zone');
     var rows = state.members.map(function(m, idx) {
-      var hasDue = (m.dueAmount > 0 || m.dueFineAmount > 0);
       return (
-        '<tr style="border-bottom: 1px solid #E2E8F0; font-size: 13.5px;">' +
-          '<td style="padding:9px;text-align:center;">' + (idx+1) + '</td>' +
-          '<td style="padding:9px;font-weight:bold;color:#0D9488;">' + esc(m.MemberNo) + '</td>' +
-          '<td style="padding:9px;font-weight:bold;">' + esc(m.Name) + '</td>' +
-          '<td style="padding:9px;">' + (formatMobile(m.Mobile)||'—') + '</td>' +
-          '<td style="padding:9px;text-align:right;">৳' + money(m.InstallmentAmount) + '</td>' +
-          '<td style="padding:9px;text-align:right;font-weight:bold;color:#047857;">৳' + money(m.totalPaid) + '</td>' +
-          '<td style="padding:9px;text-align:center;">' +
-            (hasDue ? '<span style="color:#BE123C;font-weight:bold;">বকেয়া ৳' + money(m.dueAmount+m.dueFineAmount) + '</span>' : '<span style="color:#047857;font-weight:bold;">নিয়মিত</span>') +
-          '</td>' +
+        '<tr style="border-bottom: 1px solid #E2E8F0; font-size: 13px;">' +
+          '<td style="padding:10px 8px;text-align:center;">' + (idx+1) + '</td>' +
+          '<td style="padding:10px 8px;font-weight:bold;color:#0D9488;">' + esc(m.MemberNo) + '</td>' +
+          '<td style="padding:10px 8px;font-weight:bold;">' + esc(m.Name) + '</td>' +
+          '<td style="padding:10px 8px;">' + esc(m.Mobile||'—') + '</td>' +
+          '<td style="padding:10px 8px;text-align:right;">৳ ' + money(m.InstallmentAmount) + '</td>' +
+          '<td style="padding:10px 8px;text-align:right;font-weight:bold;color:#047857;">৳ ' + money(m.totalPaid) + '</td>' +
         '</tr>'
       );
     }).join('');
 
     zone.innerHTML = (
-      '<div style="width:1050px; background:#fff; padding:40px; font-family:\'Hind Siliguri\',sans-serif;" id="master-pdf">' +
+      '<div style="width:1050px; background:#fff; padding:40px; font-family:\'Poppins\',sans-serif;" id="master-pdf">' +
         '<div style="border-bottom:3px solid #0D9488; padding-bottom:15px; margin-bottom:20px; display:flex; justify-content:space-between;">' +
-          '<div><h1 style="margin:0;font-size:24px;color:#0F172A;">' + esc(settings.orgName) + '</h1>' +
-          '<p style="margin:3px 0;font-size:13px;color:#64748B;">' + esc(settings.orgSub) + '</p></div>' +
-          '<div style="text-align:right;"><div style="font-size:18px;font-weight:bold;color:#0D9488;">সকল সদস্যের মাস্টার ডেটাশীট</div>' +
-          '<div style="font-size:12px;color:#64748B;">তারিখ: ' + bnDate(new Date()) + '</div></div>' +
+          '<div><h1 style="margin:0;font-size:22px;color:#0F172A;text-transform:uppercase;">' + esc(settings.orgName) + '</h1>' +
+          '<p style="margin:3px 0;font-size:12px;color:#64748B;">' + esc(settings.orgSub) + '</p></div>' +
+          '<div style="text-align:right;"><div style="font-size:16px;font-weight:bold;color:#0D9488;">ALL MEMBERS MASTER DIRECTORY</div>' +
+          '<div style="font-size:12px;color:#64748B;">Date: ' + new Date().toLocaleDateString('en-US') + '</div></div>' +
         '</div>' +
         '<table style="width:100%; border-collapse:collapse;">' +
-          '<thead><tr style="background:#0D9488;color:#fff;font-size:13.5px;"><th style="padding:9px;">ক্রমিক</th><th style="padding:9px;">সদস্য নং</th><th style="padding:9px;">নাম</th><th style="padding:9px;">মোবাইল</th><th style="padding:9px;text-align:right;">কিস্তি</th><th style="padding:9px;text-align:right;">মোট জমা</th><th style="padding:9px;text-align:center;">বর্তমান অবস্থা</th></tr></thead>' +
+          '<thead><tr style="background:#0D9488;color:#fff;font-size:12px;text-transform:uppercase;"><th style="padding:10px 8px;">#</th><th style="padding:10px 8px;">ID</th><th style="padding:10px 8px;">Name</th><th style="padding:10px 8px;">Mobile</th><th style="padding:10px 8px;text-align:right;">Installment</th><th style="padding:10px 8px;text-align:right;">Total Savings</th></tr></thead>' +
           '<tbody>' + rows + '</tbody>' +
         '</table>' +
       '</div>'
     );
 
-    html2canvas(document.getElementById('master-pdf'), { scale: 2.5, backgroundColor: '#ffffff' }).then(function(canvas) {
+    window.html2canvas(document.getElementById('master-pdf'), { scale: 2.2, backgroundColor: '#ffffff' }).then(function(canvas) {
       var pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
       var pageW = 210, pageH = 297;
       var imgH = (canvas.height * pageW) / canvas.width;
-      var imgData = canvas.toDataURL('image/jpeg', 0.95);
-      pdf.addImage(imgData, 'JPEG', 0, 0, pageW, Math.min(imgH, pageH));
-      pdf.save(settings.orgName + '-All-Members.pdf');
+      pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pageW, Math.min(imgH, pageH));
+      pdf.save('All_Members_Directory.pdf');
       zone.innerHTML = '';
     });
   };
 
-  // Single ID Card Download
   window.downloadIdCardPdf = function(m) {
     var zone = document.getElementById('ssa-print-zone');
     zone.innerHTML = buildVerticalIdCardHtml(m);
     var el = document.getElementById('v-card-element');
-    html2canvas(el, { scale: 3.5, backgroundColor: '#ffffff', useCORS: true }).then(function(canvas) {
+    window.html2canvas(el, { scale: 3.5, backgroundColor: '#ffffff', useCORS: true }).then(function(canvas) {
       var pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: [54, 86] });
       pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 54, 86);
-      pdf.save(m.Name + '-ID-Card.pdf');
+      pdf.save(m.Name + '-ID-Badge.pdf');
       zone.innerHTML = '';
     });
   };
 
-  // Preview ID Card Modal
   window.previewIdCard = function(mId) {
     var m = state.members.find(function(x){ return String(x.ID) === String(mId); });
     if (!m) return;
@@ -637,22 +300,20 @@
     document.getElementById('ssa-profile-overlay').style.display = 'flex';
   };
 
-  // Render Login
   function renderLogin() {
     document.getElementById('ssa-root').innerHTML = (
       '<div class="ssa-login-wrap"><div class="ssa-login-card">' +
-        '<div class="ssa-seal"><svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>' +
-        '<h1>' + esc(settings.orgName) + '</h1>' +
-        '<p class="ssa-login-sub">' + esc(settings.orgSub) + '</p>' +
-        '<form id="ssa-login-form">' +
-          '<div class="ssa-field"><label>ইউজারনেম</label><input type="text" id="ssa-user" required></div>' +
-          '<div class="ssa-field"><label>পাসওয়ার্ড</label><input type="password" id="ssa-pass" required></div>' +
-          '<button class="ssa-login-btn" type="submit">প্রবেশ করুন</button>' +
-          '<div class="ssa-login-error" id="ssa-login-err"></div>' +
+        '<h1 style="font-size:20px;margin-bottom:4px;text-transform:uppercase;">' + esc(settings.orgName) + '</h1>' +
+        '<p style="font-size:12px;color:#64748B;margin-top:0;text-transform:uppercase;">' + esc(settings.orgSub) + '</p>' +
+        '<form id="ssa-login-form" style="margin-top:20px;">' +
+          '<div class="ssa-field"><label>Username</label><input type="text" id="ssa-user" required></div>' +
+          '<div class="ssa-field"><label>Password</label><input type="password" id="ssa-pass" required></div>' +
+          '<button class="ssa-login-btn" type="submit">Sign In</button>' +
+          '<div id="ssa-login-err" style="color:#E11D48;font-size:12px;margin-top:10px;"></div>' +
         '</form>' +
       '</div></div>'
     );
-    document.getElementById('ssa-login-form').addEventListener('submit', function(e) {
+    document.getElementById('ssa-login-form').onsubmit = function(e) {
       e.preventDefault();
       var u = document.getElementById('ssa-user').value.trim();
       var p = document.getElementById('ssa-pass').value;
@@ -664,68 +325,42 @@
           sessionStorage.setItem('ssa_auth', JSON.stringify(state.auth));
           renderApp();
         } else if (u === 'admin' && p === 'admin') {
-          state.auth = { username: 'admin', name: 'প্রধান অ্যাডমিন', role: 'Admin' };
+          state.auth = { username: 'admin', name: 'Chief Administrator', role: 'Admin' };
           sessionStorage.setItem('ssa_auth', JSON.stringify(state.auth));
           renderApp();
         } else {
-          document.getElementById('ssa-login-err').textContent = 'ইউজারনেম বা পাসওয়ার্ড সঠিক নয়!';
+          document.getElementById('ssa-login-err').textContent = 'Invalid username or password!';
         }
       });
-    });
+    };
   }
 
   function renderApp() {
-    var isAdmin = state.auth && state.auth.role === 'Admin';
     document.getElementById('ssa-root').innerHTML = (
-      '<div class="ssa-app" style="display:flex;">' +
-        '<div class="ssa-shell">' +
-          '<div class="ssa-sidebar">' +
-            '<div class="ssa-brand">' +
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>' +
-              '<div><div class="ssa-brand-text">' + esc(settings.orgName) + '</div><div class="ssa-brand-sub">' + esc(settings.orgSub) + '</div></div>' +
-            '</div>' +
-            '<div class="ssa-nav">' +
-              '<button class="active" data-page="dashboard">ড্যাশবোর্ড</button>' +
-              '<button data-page="members">সদস্য তালিকা</button>' +
-              '<button data-page="due">বকেয়া সদস্য</button>' +
-              (isAdmin ? '<button data-page="settings">সিস্টেম কাস্টমাইজেশন</button>' : '') +
-            '</div>' +
-            '<div class="ssa-user-info">' +
-              '<div class="ssa-user-avatar">' + (state.auth ? state.auth.name.charAt(0) : 'A') + '</div>' +
-              '<div><strong>' + esc(state.auth?state.auth.name:'') + '</strong><span>' + (isAdmin?'অ্যাডমিন':'মেম্বার') + '</span></div>' +
-            '</div>' +
-            '<button class="ssa-logout" id="ssa-logout-btn">লগআউট</button>' +
+      '<div class="ssa-shell">' +
+        '<div class="ssa-sidebar">' +
+          '<h2 style="font-size:14px;text-transform:uppercase;margin:0 0 4px;">' + esc(settings.orgName) + '</h2>' +
+          '<p style="font-size:10px;color:#A7F3D0;text-transform:uppercase;margin:0 0 20px;">' + esc(settings.orgSub) + '</p>' +
+          '<div class="ssa-nav">' +
+            '<button class="active" onclick="location.reload()">Dashboard</button>' +
+            '<button onclick="window.downloadAllMembersPdf()">Export PDF</button>' +
           '</div>' +
-          '<div class="ssa-main" id="ssa-main"></div>' +
+          '<button class="ssa-btn" style="background:#E11D48;color:#fff;margin-top:auto;" onclick="sessionStorage.clear();location.reload();">Sign Out</button>' +
         '</div>' +
+        '<div class="ssa-main" id="ssa-main"></div>' +
       '</div>' +
-      '<div class="ssa-overlay" id="ssa-profile-overlay"><div class="ssa-modal" style="max-width:440px; text-align:center;">' +
+      '<div class="ssa-overlay" id="ssa-profile-overlay"><div class="ssa-modal" style="max-width:400px; text-align:center;">' +
         '<div id="ssa-profile-card-holder" style="display:flex; justify-content:center;"></div>' +
-        '<div class="ssa-modal-actions" style="justify-content:center;">' +
-          '<button type="button" class="ssa-btn ssa-btn-ghost" onclick="document.getElementById(\'ssa-profile-overlay\').style.display=\'none\'">বন্ধ করুন</button>' +
-          '<button type="button" class="ssa-btn ssa-btn-primary" id="ssa-profile-download-btn">আইডি কার্ড PDF ডাউনলোড</button>' +
+        '<div style="margin-top:20px; display:flex; justify-content:center; gap:10px;">' +
+          '<button type="button" class="ssa-btn ssa-btn-ghost" onclick="document.getElementById(\'ssa-profile-overlay\').style.display=\'none\'">Close</button>' +
+          '<button type="button" class="ssa-btn ssa-btn-primary" id="ssa-profile-download-btn">Download PDF</button>' +
         '</div>' +
       '</div></div>'
     );
-
-    document.getElementById('ssa-logout-btn').onclick = function() {
-      sessionStorage.removeItem('ssa_auth'); state.auth = null; renderLogin();
-    };
-
-    document.querySelectorAll('.ssa-nav button').forEach(function(btn) {
-      btn.onclick = function() {
-        document.querySelectorAll('.ssa-nav button').forEach(function(b){ b.classList.remove('active'); });
-        btn.classList.add('active');
-        state.page = btn.dataset.page;
-        renderCurrentPage();
-      };
-    });
-
     loadData();
   }
 
   function loadData() {
-    document.getElementById('ssa-main').innerHTML = '<div style="text-align:center;padding:50px;">তথ্য লোড হচ্ছে...</div>';
     authReady.then(function() {
       return db.collection('members').get();
     }).then(function(snap) {
@@ -735,12 +370,8 @@
         arr.push({
           ID: d.id, Name: data.name, MemberNo: data.member_no, Mobile: data.mobile,
           InstallmentAmount: data.installment_amount || 1000,
-          DueDay: data.due_day || 12, FineAmount: data.fine_amount || 300,
           Photo: data.photo || '', BloodGroup: data.blood_group || ''
         });
-      });
-      arr.sort(function(a, b) {
-        return (parseInt(String(a.MemberNo).replace(/\D/g,''))||0) - (parseInt(String(b.MemberNo).replace(/\D/g,''))||0);
       });
       state.members = arr;
       return db.collection('payments').get();
@@ -749,120 +380,48 @@
       psnap.forEach(function(d) {
         var p = d.data();
         var mId = String(p.member_id);
-        if (!pMap[mId]) pMap[mId] = [];
-        pMap[mId].push({ ID: d.id, MemberID: mId, Month: p.month, Amount: p.amount, Date: p.date, Fine: p.fine, Note: p.note });
+        if (!pMap[mId]) pMap[mId] = 0;
+        pMap[mId] += Number(p.amount || 0);
       });
-      state.members.forEach(function(m) { m.payments = pMap[m.ID] || []; });
-      calculateAllData();
-      renderCurrentPage();
+      state.members.forEach(function(m) { m.totalPaid = pMap[m.ID] || 0; });
+      renderMembersTable();
     });
   }
 
-  function renderCurrentPage() {
-    if (state.page === 'dashboard') renderDashboard();
-    else if (state.page === 'members') renderMembers();
-    else if (state.page === 'due') renderDue();
-    else if (state.page === 'settings') renderSettings();
-  }
+  function renderMembersTable() {
+    var rows = state.members.map(function(m, idx) {
+      var wa = toWhatsApp(m.Mobile);
+      var waLink = wa ? ('https://wa.me/' + wa) : null;
+      return (
+        '<tr>' +
+          '<td>' + (idx+1) + '</td>' +
+          '<td style="font-weight:bold;color:#0D9488;">' + esc(m.MemberNo) + '</td>' +
+          '<td style="font-weight:bold;">' + esc(m.Name) + '</td>' +
+          '<td>' +
+            (waLink ? ('<a href="' + waLink + '" target="_blank" style="color:#059669;font-weight:600;text-decoration:none;">' + esc(m.Mobile) + ' (WhatsApp)</a>') : esc(m.Mobile||'—')) +
+          '</td>' +
+          '<td>৳ ' + money(m.InstallmentAmount) + '</td>' +
+          '<td style="font-weight:bold;color:#059669;">৳ ' + money(m.totalPaid) + '</td>' +
+          '<td><button class="ssa-btn ssa-btn-primary" onclick="previewIdCard(\'' + m.ID + '\')">ID Badge</button></td>' +
+        '</tr>'
+      );
+    }).join('');
 
-  function renderDashboard() {
-    var d = state.dashboard || {};
     document.getElementById('ssa-main').innerHTML = (
-      '<h2 class="ssa-page-title">ড্যাশবোর্ড ওভারভিউ</h2>' +
-      '<p class="ssa-page-sub">' + bnDate(new Date()) + ' • ' + esc(settings.orgName) + '</p>' +
-      '<div class="ssa-stats">' +
-        '<div class="ssa-stat"><div class="ssa-stat-label">মোট সদস্য</div><div class="ssa-stat-value">' + (d.totalMembers||0) + ' জন</div></div>' +
-        '<div class="ssa-stat"><div class="ssa-stat-label">মোট সঞ্চয় জমা</div><div class="ssa-stat-value" style="color:#0D9488;">৳ ' + money(d.totalCollected) + '</div></div>' +
-        '<div class="ssa-stat"><div class="ssa-stat-label">মোট জরিমানা আদায়</div><div class="ssa-stat-value" style="color:#D97706;">৳ ' + money(d.totalFineCollected) + '</div></div>' +
-        '<div class="ssa-stat warn"><div class="ssa-stat-label">মোট বকেয়া (জরিমানাসহ)</div><div class="ssa-stat-value">৳ ' + money(d.duesAmount+d.duesFine) + '</div></div>' +
-      '</div>' +
-      '<div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;">' +
-        '<button class="ssa-btn ssa-btn-primary" onclick="window.downloadAllMembersPdf()">সব সদস্যের ডেটা (PDF ডাউনলোড)</button>' +
-      '</div>' +
-      '<div class="ssa-table-wrap">' +
-        '<table class="ssa-table"><thead><tr><th>সদস্য নং</th><th>নাম</th><th>মোবাইল</th><th>বকেয়া</th></tr></thead><tbody>' +
-        state.dueMembers.map(function(m) {
-          return '<tr><td class="ssa-en">' + esc(m.MemberNo) + '</td><td>' + esc(m.Name) + '</td><td class="ssa-en">' + (formatMobile(m.Mobile)||'—') + '</td><td style="color:#E11D48;font-weight:bold;">৳' + money(m.dueAmount+m.dueFineAmount) + '</td></tr>';
-        }).join('') +
-        '</tbody></table>' +
-      '</div>'
-    );
-  }
-
-  function renderMembers() {
-    document.getElementById('ssa-main').innerHTML = (
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">' +
-        '<div><h2 class="ssa-page-title">সদস্য তালিকা</h2><p class="ssa-page-sub">মোট ' + state.members.length + ' জন সদস্য</p></div>' +
-        '<button class="ssa-btn ssa-btn-primary" onclick="window.downloadAllMembersPdf()">সব সদস্যের ডেটা (PDF)</button>' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">' +
+        '<h1 style="font-size:20px;text-transform:uppercase;margin:0;">Members Directory (' + state.members.length + ')</h1>' +
+        '<button class="ssa-btn ssa-btn-primary" onclick="window.downloadAllMembersPdf()">Download All Members PDF</button>' +
       '</div>' +
       '<div class="ssa-table-wrap">' +
-        '<table class="ssa-table"><thead><tr><th>ক্রমিক</th><th>ছবি</th><th>সদস্য নং</th><th>নাম</th><th>মোবাইল</th><th>মাসিক কিস্তি</th><th>মোট সঞ্চয়</th><th>কার্যক্রম</th></tr></thead><tbody>' +
-        state.members.map(function(m, idx) {
-          return (
-            '<tr>' +
-              '<td class="ssa-en">' + (idx+1) + '</td>' +
-              '<td><img class="ssa-avatar" src="' + (m.Photo||FALLBACK_AVATAR) + '"></td>' +
-              '<td class="ssa-en" style="font-weight:bold;color:#0D9488;">' + esc(m.MemberNo) + '</td>' +
-              '<td style="font-weight:bold;">' + esc(m.Name) + '</td>' +
-              '<td class="ssa-en">' + (formatMobile(m.Mobile)||'—') + '</td>' +
-              '<td>৳' + money(m.InstallmentAmount) + '</td>' +
-              '<td style="color:#047857;font-weight:bold;">৳' + money(m.totalPaid) + '</td>' +
-              '<td><button class="ssa-btn ssa-btn-sm ssa-btn-primary" onclick="previewIdCard(\'' + m.ID + '\')">কার্ড দেখুন</button></td>' +
-            '</tr>'
-          );
-        }).join('') +
-        '</tbody></table>' +
+        '<table class="ssa-table"><thead><tr><th>#</th><th>Member ID</th><th>Name</th><th>Mobile</th><th>Rate</th><th>Total Paid</th><th>Action</th></tr></thead>' +
+        '<tbody>' + rows + '</tbody></table>' +
       '</div>'
     );
   }
 
-  function renderDue() {
-    document.getElementById('ssa-main').innerHTML = (
-      '<h2 class="ssa-page-title">বকেয়া সদস্য তালিকা</h2>' +
-      '<p class="ssa-page-sub">' + state.dueMembers.length + ' জন সদস্যের বকেয়া রয়েছে</p>' +
-      '<div class="ssa-table-wrap">' +
-        '<table class="ssa-table"><thead><tr><th>সদস্য নং</th><th>নাম</th><th>মোবাইল</th><th>বকেয়া কিস্তি</th><th>বকেয়া জরিমানা</th><th>মোট বকেয়া</th></tr></thead><tbody>' +
-        state.dueMembers.map(function(m) {
-          return '<tr><td class="ssa-en" style="font-weight:bold;">' + esc(m.MemberNo) + '</td><td>' + esc(m.Name) + '</td><td class="ssa-en">' + (formatMobile(m.Mobile)||'—') + '</td><td>৳' + money(m.dueAmount) + '</td><td>৳' + money(m.dueFineAmount) + '</td><td style="color:#E11D48;font-weight:bold;">৳' + money(m.dueAmount+m.dueFineAmount) + '</td></tr>';
-        }).join('') +
-        '</tbody></table>' +
-      '</div>'
-    );
-  }
-
-  function renderSettings() {
-    document.getElementById('ssa-main').innerHTML = (
-      '<h2 class="ssa-page-title">সিস্টেম কাস্টমাইজেশন</h2>' +
-      '<p class="ssa-page-sub">সংস্থার নাম, স্লোগান ও কিস্তির ডিফল্ট মান পরিবর্তন করুন</p>' +
-      '<div style="max-width:600px;background:#fff;border-radius:16px;padding:26px;border:1px solid #E2E8F0;">' +
-        '<form id="settings-form">' +
-          '<div class="ssa-field"><label>সংস্থার নাম</label><input type="text" id="set-name" value="' + esc(settings.orgName) + '" required></div>' +
-          '<div class="ssa-field"><label>স্লোগান / সাবটাইটেল</label><input type="text" id="set-sub" value="' + esc(settings.orgSub) + '"></div>' +
-          '<div class="ssa-field"><label>ডিফল্ট মাসিক কিস্তি (৳)</label><input type="number" id="set-inst" value="' + settings.defaultInstallment + '" required></div>' +
-          '<div class="ssa-field"><label>কিস্তি পরিশোধের শেষ দিন</label><input type="number" id="set-due" value="' + settings.defaultDueDay + '" required></div>' +
-          '<div class="ssa-field"><label>ডিফল্ট বিলম্ব জরিমানা (৳)</label><input type="number" id="set-fine" value="' + settings.defaultFine + '" required></div>' +
-          '<button type="submit" class="ssa-btn ssa-btn-primary" style="width:100%;padding:12px;margin-top:10px;">সংরক্ষণ করুন</button>' +
-        '</form>' +
-      '</div>'
-    );
-    document.getElementById('settings-form').onsubmit = function(e) {
-      e.preventDefault();
-      settings.orgName = document.getElementById('set-name').value;
-      settings.orgSub = document.getElementById('set-sub').value;
-      settings.defaultInstallment = Number(document.getElementById('set-inst').value);
-      settings.defaultDueDay = Number(document.getElementById('set-due').value);
-      settings.defaultFine = Number(document.getElementById('set-fine').value);
-      db.collection('settings').doc('org_settings').set(settings, { merge: true }).then(function() {
-        alert('সেটিংস সফলভাবে সংরক্ষিত হয়েছে!');
-        renderApp();
-      });
-    };
-  }
-
-  // Init
   var saved = sessionStorage.getItem('ssa_auth');
   if (saved) {
-    try { state.auth = JSON.parse(saved); renderApp(); } catch(e) { renderLogin(); }
+    try { state.auth = JSON.parse(saved); renderApp(); } catch(e){ renderLogin(); }
   } else {
     renderLogin();
   }

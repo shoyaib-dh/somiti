@@ -1,25 +1,18 @@
 import { Member, Payment, LedgerEntry, DueMonthItem, OrgSettings } from './types';
 
-export const BANGLA_MONTHS = [
-  'জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন',
-  'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'
+export const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-export const BANGLA_DIGITS: { [key: string]: string } = {
-  '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
-  '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
-};
-
 export function toBn(num: number | string | undefined | null): string {
-  if (num === undefined || num === null || num === '') return '০';
-  const str = String(num);
-  return str.replace(/[0-9]/g, (d) => BANGLA_DIGITS[d] || d);
+  if (num === undefined || num === null || num === '') return '0';
+  return String(num);
 }
 
 export function money(amount: number | string | undefined | null): string {
   const n = Number(amount || 0);
-  const formatted = n.toLocaleString('en-IN');
-  return toBn(formatted);
+  return n.toLocaleString('en-US');
 }
 
 export function formatBnDate(dateInput?: string | Date | null): string {
@@ -27,40 +20,49 @@ export function formatBnDate(dateInput?: string | Date | null): string {
   const d = new Date(dateInput);
   if (isNaN(d.getTime())) return String(dateInput);
   
-  const day = toBn(d.getDate());
-  const month = BANGLA_MONTHS[d.getMonth()];
-  const year = toBn(d.getFullYear());
-  return `${day} ${month}, ${year}`;
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = MONTH_NAMES[d.getMonth()]?.substring(0, 3) || '';
+  const year = d.getFullYear();
+  return `${day} ${month} ${year}`;
 }
 
 export function formatMonthBn(yyyyMm?: string): string {
   if (!yyyyMm || !yyyyMm.includes('-')) return '';
   const [y, m] = yyyyMm.split('-');
   const monthIndex = parseInt(m, 10) - 1;
-  const monthName = BANGLA_MONTHS[monthIndex] || m;
-  return `${monthName} ${toBn(y)}`;
+  const monthName = MONTH_NAMES[monthIndex] || m;
+  return `${monthName} ${y}`;
 }
 
+/**
+ * Format any international phone number cleanly with country code
+ */
 export function formatMobile(mobile?: string): string {
-  let digits = String(mobile || '').replace(/\D/g, '');
-  if (!digits) return '';
-  if (digits.startsWith('880')) digits = digits.substring(3);
-  if (!digits.startsWith('0')) digits = '0' + digits;
-  return digits;
+  if (!mobile) return '';
+  const trimmed = String(mobile).trim();
+  return trimmed;
 }
 
+/**
+ * Extract clean digits for WhatsApp international link
+ * Supports any country: +1, +44, +880, +971, +966, +91, etc.
+ */
 export function toWhatsAppNumber(mobile?: string): string | null {
-  const digits = String(mobile || '').replace(/\D/g, '');
+  if (!mobile) return null;
+  let digits = String(mobile).replace(/\D/g, '');
   if (!digits) return null;
-  if (digits.startsWith('880')) return digits;
-  if (digits.startsWith('0')) return '88' + digits;
-  return '880' + digits;
+
+  // If local BD format starting with 01...
+  if (digits.startsWith('0') && digits.length === 11) {
+    digits = '88' + digits;
+  }
+  return digits;
 }
 
 export function makeWhatsAppLink(mobile: string, name: string, dueTotal: number, orgName: string): string | null {
   const num = toWhatsAppNumber(mobile);
   if (!num) return null;
-  const msg = `সম্মানিত ${name}, আসসালামু আলাইকুম। ${orgName}-এ আপনার কিস্তি ও জরিমানাসহ মোট ৳${money(dueTotal)} বকেয়া রয়েছে। অনুগ্রহপূর্বক নির্ধারিত সময়ের মধ্যে পরিশোধ করার অনুরোধ করা হচ্ছে। ধন্যবাদ।`;
+  const msg = `Dear ${name}, this is an official reminder from ${orgName}. Your pending installment and overdue amount is ৳${money(dueTotal)}. Please clear the payment at your earliest convenience. Thank you.`;
   return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
 }
 
@@ -130,9 +132,9 @@ export function generateLedger(m: Member, payments: Payment[]): LedgerEntry[] {
     const [yStr, mStr] = ym.split('-');
     const y = parseInt(yStr, 10);
     const mth = parseInt(mStr, 10);
-    const mName = `${BANGLA_MONTHS[mth - 1]} ${toBn(y)}`;
+    const mName = `${MONTH_NAMES[mth - 1]} ${y}`;
 
-    // Special concession for starting month 2026-01 as in original app
+    // Special concession for starting month 2026-01
     const expectedAmt = ym === '2026-01' ? 500 : installment;
     const isPastDue =
       y < currYear ||
@@ -233,14 +235,14 @@ export function calculateMemberFinancials(members: Member[]): {
 }
 
 export const DEFAULT_ORG_SETTINGS: OrgSettings = {
-  orgName: 'সপ্তদশ সহযাত্রা',
-  orgSub: 'সঞ্চয় ও ঋণদান সমবায় সমিতি',
-  phone: '01712-345678',
+  orgName: 'SHOPTODASH SOHOJATRA',
+  orgSub: 'Savings & Credit Co-operative Society',
+  phone: '+880 1712-345678',
   email: 'info@shoptodash.org',
-  address: 'বাগমারা, রাজশাহী, বাংলাদেশ',
+  address: 'Bagmara, Rajshahi, Bangladesh',
   cardTheme: 'teal',
   defaultInstallment: 1000,
   defaultDueDay: 12,
   defaultFine: 300,
-  registrationNo: 'রেজিঃ নং: ১৭/২০২৬'
+  registrationNo: 'REG: 17/2026'
 };

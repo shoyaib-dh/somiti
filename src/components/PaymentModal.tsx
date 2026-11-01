@@ -72,7 +72,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (amount <= 0) {
-      setError('জমার পরিমাণ ০ টাকার বেশি হতে হবে');
+      setError('Amount must be greater than 0');
       return;
     }
 
@@ -90,14 +90,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       });
       onClose();
     } catch (err: any) {
-      setError(err?.message || 'কিস্তি জমা ব্যর্থ হয়েছে');
+      setError(err?.message || 'Payment submission failed');
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm font-sans">
       <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -106,8 +106,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               <HandCoins className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-800">কিস্তি ও সঞ্চয় গ্রহণ</h2>
-              <p className="text-xs text-slate-500 font-semibold text-teal-700">{member.Name} ({member.MemberNo})</p>
+              <h2 className="text-lg font-bold text-slate-800">Collect Installment</h2>
+              <p className="text-xs text-teal-700 font-semibold">{member.Name} ({member.MemberNo})</p>
             </div>
           </div>
           <button
@@ -128,7 +128,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           )}
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">কোন মাসের কিস্তি? *</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-700">Installment Month *</label>
             <select
               value={targetMonth}
               onChange={(e) => handleMonthChange(e.target.value)}
@@ -137,20 +137,20 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               {member.missingMonths && member.missingMonths.length > 0 ? (
                 member.missingMonths.map((due) => (
                   <option key={due.ym} value={due.ym}>
-                    {due.monthName} (বকেয়া: ৳{money(due.dueAmt)}{due.dueFine > 0 ? `, জরিমানা: ৳${money(due.dueFine)}` : ''})
+                    {due.monthName} (Due: ৳{money(due.dueAmt)}{due.dueFine > 0 ? `, Fine: ৳${money(due.dueFine)}` : ''})
                   </option>
                 ))
               ) : null}
               {/* Also allow current or advance months */}
               <option value={`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`}>
-                চলতি মাস ({new Date().toLocaleDateString('bn-BD', { month: 'long', year: 'numeric' })})
+                Current Month ({new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })})
               </option>
             </select>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-600">জমার পরিমাণ (৳) *</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-700">Amount (৳) *</label>
               <input
                 type="number"
                 min="1"
@@ -163,7 +163,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-600">জরিমানা প্রদান (৳)</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-700">Fine Paid (৳)</label>
               <input
                 type="number"
                 min="0"
@@ -176,7 +176,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">জমার তারিখ *</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-700">Payment Date *</label>
             <input
               type="date"
               required
@@ -187,12 +187,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">মন্তব্য / ভাউচার নং (ঐচ্ছিক)</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-700">Note / Voucher Ref (Optional)</label>
             <input
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="যেমন: বিকাশ বা নগদ ক্যাশ"
+              placeholder="e.g. Bank Transfer, Cash, bKash"
               className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             />
           </div>
@@ -203,14 +203,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               onClick={onClose}
               className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
             >
-              বাতিল
+              Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
               className="rounded-xl bg-teal-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-teal-600/30 hover:bg-teal-700 transition disabled:opacity-50"
             >
-              {submitting ? 'সংরক্ষণ হচ্ছে...' : 'জমা নিশ্চিত করুন'}
+              {submitting ? 'Processing...' : 'Confirm Payment'}
             </button>
           </div>
         </form>

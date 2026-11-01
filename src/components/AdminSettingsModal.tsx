@@ -26,7 +26,7 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
     if (!file) return;
 
     if (file.size > 2 * 1024 * 1024) {
-      alert('লোগোর আকার ২ মেগাবাইটের কম হতে হবে');
+      alert('Logo file size must be less than 2MB');
       return;
     }
 
@@ -67,28 +67,28 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
     setStatusMsg('');
     try {
       await onSave(formData);
-      setStatusMsg('সেটিংস সফলভাবে সংরক্ষিত হয়েছে!');
+      setStatusMsg('Settings saved successfully!');
       setTimeout(() => {
         setStatusMsg('');
         onClose();
       }, 700);
     } catch (err: any) {
-      alert('সেটিংস সংরক্ষণ ব্যর্থ হয়েছে: ' + (err?.message || err));
+      alert('Failed to save settings: ' + (err?.message || err));
     } finally {
       setSaving(false);
     }
   };
 
   const themeOptions: { id: OrgSettings['cardTheme']; label: string; bg: string }[] = [
-    { id: 'teal', label: 'টিল অ্যারো (স্ক্রিনশটের মতো)', bg: 'from-teal-600 to-teal-800' },
-    { id: 'emerald', label: 'সবুজ এমারেল্ড', bg: 'from-emerald-600 to-emerald-800' },
-    { id: 'navy', label: 'রয়্যাল নেভি ব্লু', bg: 'from-blue-700 to-slate-900' },
-    { id: 'indigo', label: 'ক্লাসিক ইন্ডিগো', bg: 'from-indigo-600 to-indigo-900' },
-    { id: 'gold', label: 'লাক্সারি গোল্ড / অ্যাম্বার', bg: 'from-amber-600 to-amber-900' }
+    { id: 'teal', label: 'Teal Modern (Reference)', bg: 'from-teal-600 to-teal-800' },
+    { id: 'emerald', label: 'Emerald Green', bg: 'from-emerald-600 to-emerald-800' },
+    { id: 'navy', label: 'Royal Navy Blue', bg: 'from-blue-700 to-slate-900' },
+    { id: 'indigo', label: 'Classic Indigo', bg: 'from-indigo-600 to-indigo-900' },
+    { id: 'gold', label: 'Luxury Amber Gold', bg: 'from-amber-600 to-amber-900' }
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm font-sans">
       <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl md:p-8">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -97,8 +97,8 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
               <Building2 className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-800">অ্যাডমিন সিস্টেম কাস্টমাইজেশন</h2>
-              <p className="text-xs text-slate-500">সংস্থার নাম, লোগো, আইডি কার্ডের থিম ও ডিফল্ট মান পরিবর্তন করুন</p>
+              <h2 className="text-lg font-bold text-slate-800">Admin System Customization</h2>
+              <p className="text-xs text-slate-500">Configure organization branding, ID badge theme, and financial defaults</p>
             </div>
           </div>
           <button
@@ -113,47 +113,47 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
         <form onSubmit={handleSubmit} className="mt-6 space-y-5">
           {/* Section 1: Organization Identity */}
           <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-4">
-            <h3 className="mb-3 text-sm font-semibold text-slate-700 flex items-center gap-2">
+            <h3 className="mb-3 text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
               <Building2 className="h-4 w-4 text-teal-600" />
-              সংস্থার সাধারণ তথ্য
+              Organization Identity
             </h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">সমিতি / সংস্থার নাম *</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-700">Organization Name *</label>
                 <input
                   type="text"
                   required
                   value={formData.orgName}
                   onChange={(e) => setFormData({ ...formData, orgName: e.target.value })}
                   className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 bg-white"
-                  placeholder="যেমন: সপ্তদশ সহযাত্রা"
+                  placeholder="e.g. Shoptodash Sohojatra"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">স্লোগান / সাবটাইটেল</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-700">Slogan / Subtitle</label>
                 <input
                   type="text"
                   value={formData.orgSub}
                   onChange={(e) => setFormData({ ...formData, orgSub: e.target.value })}
                   className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 bg-white"
-                  placeholder="যেমন: সঞ্চয় ও ঋণদান সমবায় সমিতি"
+                  placeholder="e.g. Savings & Credit Co-operative Society"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">রেজিস্ট্রেশন নম্বর (ঐচ্ছিক)</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-700">Registration Number</label>
                 <input
                   type="text"
                   value={formData.registrationNo || ''}
                   onChange={(e) => setFormData({ ...formData, registrationNo: e.target.value })}
                   className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 bg-white"
-                  placeholder="যেমন: রেজিঃ ১৭/২০২৬"
+                  placeholder="e.g. REG: 17/2026"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">যোগাযোগের মোবাইল</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-700">Contact Phone (Any Country)</label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                   <input
@@ -161,12 +161,13 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full rounded-lg border border-slate-300 pl-9 pr-3.5 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 bg-white"
+                    placeholder="e.g. +880 1712-345678 or +1 555-0199"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">ইমেইল ঠিকানা</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-700">Official Email</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                   <input
@@ -179,7 +180,7 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">ঠিকানা</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-700">Office Address</label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                   <input
@@ -194,7 +195,7 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
 
             {/* Logo Upload */}
             <div className="mt-4 pt-3 border-t border-slate-200">
-              <label className="mb-2 block text-xs font-medium text-slate-600">সংস্থার লোগো / প্রতীক</label>
+              <label className="mb-2 block text-xs font-semibold text-slate-700">Organization Logo / Emblem</label>
               <div className="flex items-center gap-4">
                 {formData.logoUrl ? (
                   <div className="relative">
@@ -212,13 +213,13 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
                     </button>
                   </div>
                 ) : (
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-dashed border-slate-300 bg-white text-slate-400 text-xs text-center p-1">
-                    লোগো নেই
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-dashed border-slate-300 bg-white text-slate-400 text-xs text-center p-1 font-medium">
+                    No Logo
                   </div>
                 )}
-                <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
+                <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
                   <Upload className="h-4 w-4 text-teal-600" />
-                  লোগো ছবি নির্বাচন করুন
+                  Upload Logo Image
                   <input
                     type="file"
                     accept="image/*"
@@ -232,9 +233,9 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
 
           {/* Section 2: ID Card Theme Selection */}
           <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-4">
-            <h3 className="mb-3 text-sm font-semibold text-slate-700 flex items-center gap-2">
+            <h3 className="mb-3 text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
               <Palette className="h-4 w-4 text-teal-600" />
-              আইডি কার্ডের কালার থিম
+              ID Badge Color Theme
             </h3>
             <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3">
               {themeOptions.map((opt) => (
@@ -257,13 +258,13 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
 
           {/* Section 3: Financial Defaults */}
           <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-4">
-            <h3 className="mb-3 text-sm font-semibold text-slate-700 flex items-center gap-2">
+            <h3 className="mb-3 text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
               <DollarSign className="h-4 w-4 text-teal-600" />
-              ডিফল্ট নিয়ম ও আর্থিক সেটিংস
+              Financial Policy & Defaults
             </h3>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">ডিফল্ট মাসিক কিস্তি (৳)</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-700">Default Installment (৳)</label>
                 <input
                   type="number"
                   min="0"
@@ -276,7 +277,7 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">কিস্তি জমার শেষ দিন (১-২৮)</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-700">Due Day (1-28)</label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                   <input
@@ -292,7 +293,7 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-600">ডিফল্ট বিলম্ব জরিমানা (৳)</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-700">Default Late Fine (৳)</label>
                 <input
                   type="number"
                   min="0"
@@ -319,7 +320,7 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
               onClick={onClose}
               className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
             >
-              বাতিল
+              Cancel
             </button>
             <button
               type="submit"
@@ -327,7 +328,7 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
               className="flex items-center gap-2 rounded-xl bg-teal-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-teal-600/30 hover:bg-teal-700 transition disabled:opacity-50"
             >
               <Save className="h-4 w-4" />
-              {saving ? 'সংরক্ষণ হচ্ছে...' : 'সেটিংস সেভ করুন'}
+              {saving ? 'Saving...' : 'Save Settings'}
             </button>
           </div>
         </form>

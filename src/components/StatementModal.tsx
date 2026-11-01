@@ -43,26 +43,26 @@ export const StatementModal: React.FC<StatementModalProps> = ({
     try {
       await downloadMemberStatementPdf(member, settings);
     } catch (err: any) {
-      alert('স্টেটমেন্ট পিডিএফ তৈরি ব্যর্থ হয়েছে: ' + (err?.message || err));
+      alert('Failed to generate statement PDF: ' + (err?.message || err));
     } finally {
       setDownloading(false);
     }
   };
 
   const handleDelete = async (paymentId: string) => {
-    if (!window.confirm('আপনি কি নিশ্চিত যে এই কিস্তিটি বাতিল করতে চান?')) return;
+    if (!window.confirm('Are you sure you want to delete this payment record?')) return;
     setDeletingId(paymentId);
     try {
       await onDeletePayment(paymentId);
     } catch (err: any) {
-      alert('বাতিল করা যায়নি: ' + (err?.message || err));
+      alert('Failed to delete: ' + (err?.message || err));
     } finally {
       setDeletingId(null);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm font-sans">
       <div className="relative flex max-h-[92vh] w-full max-w-3xl flex-col rounded-2xl bg-white p-6 shadow-2xl md:p-7">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -71,8 +71,8 @@ export const StatementModal: React.FC<StatementModalProps> = ({
               <FileText className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-800">{member.Name} — সঞ্চয় স্টেটমেন্ট</h2>
-              <p className="text-xs text-slate-500 font-mono">সদস্য নং: {member.MemberNo} | মোবাইল: {member.Mobile || '—'}</p>
+              <h2 className="text-lg font-bold text-slate-800">{member.Name} — Account Ledger</h2>
+              <p className="text-xs text-slate-500 font-mono">ID: {member.MemberNo} | Phone: {member.Mobile || '—'}</p>
             </div>
           </div>
           <button
@@ -86,17 +86,17 @@ export const StatementModal: React.FC<StatementModalProps> = ({
         {/* Financial Summary Pill Box */}
         <div className="mt-4 grid grid-cols-3 gap-3 rounded-xl bg-slate-50 p-3 text-center border border-slate-100">
           <div>
-            <div className="text-[11px] font-medium text-slate-500">মোট সঞ্চয় জমা</div>
-            <div className="text-lg font-bold text-teal-700">৳{money(totalPaid)}</div>
+            <div className="text-[11px] font-semibold text-slate-500 uppercase">Total Savings Paid</div>
+            <div className="text-base font-bold text-teal-700">৳ {money(totalPaid)}</div>
           </div>
           <div>
-            <div className="text-[11px] font-medium text-slate-500">মোট জরিমানা জমা</div>
-            <div className="text-lg font-bold text-amber-600">৳{money(totalFine)}</div>
+            <div className="text-[11px] font-semibold text-slate-500 uppercase">Total Fine Paid</div>
+            <div className="text-base font-bold text-amber-600">৳ {money(totalFine)}</div>
           </div>
           <div>
-            <div className="text-[11px] font-medium text-slate-500">বর্তমান বকেয়া</div>
-            <div className={`text-lg font-bold ${((member.dueAmount || 0) + (member.dueFineAmount || 0)) > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
-              ৳{money((member.dueAmount || 0) + (member.dueFineAmount || 0))}
+            <div className="text-[11px] font-semibold text-slate-500 uppercase">Total Overdue</div>
+            <div className={`text-base font-bold ${((member.dueAmount || 0) + (member.dueFineAmount || 0)) > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+              ৳ {money((member.dueAmount || 0) + (member.dueFineAmount || 0))}
             </div>
           </div>
         </div>
@@ -104,14 +104,14 @@ export const StatementModal: React.FC<StatementModalProps> = ({
         {/* Ledger Table */}
         <div className="mt-4 flex-1 overflow-y-auto rounded-xl border border-slate-200">
           <table className="w-full text-left text-xs text-slate-700">
-            <thead className="sticky top-0 bg-slate-100/90 backdrop-blur-xs font-semibold text-slate-600 uppercase tracking-wider text-[11px]">
+            <thead className="sticky top-0 bg-slate-100/95 backdrop-blur-xs font-semibold text-slate-600 uppercase tracking-wider text-[11px]">
               <tr>
-                <th className="p-3">কিস্তির মাস</th>
-                <th className="p-3">জমার তারিখ</th>
-                <th className="p-3">জমার পরিমাণ</th>
-                <th className="p-3">জরিমানা</th>
-                <th className="p-3">অবস্থা ও মন্তব্য</th>
-                {isAdmin && <th className="p-3 text-right">কার্যক্রম</th>}
+                <th className="p-3">Month</th>
+                <th className="p-3">Payment Date</th>
+                <th className="p-3">Deposit</th>
+                <th className="p-3">Fine</th>
+                <th className="p-3">Status / Notes</th>
+                {isAdmin && <th className="p-3 text-right">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
@@ -128,38 +128,38 @@ export const StatementModal: React.FC<StatementModalProps> = ({
                     <td className="p-3">
                       {entry.paid > 0 ? (
                         <div>
-                          <span className="font-bold text-teal-700">৳{money(entry.paid)}</span>
+                          <span className="font-bold text-teal-700">৳ {money(entry.paid)}</span>
                           {entry.dueAmt > 0 && (
                             <span className="ml-1.5 text-[10px] font-bold text-rose-600">
-                              (বকেয়া: ৳{money(entry.dueAmt)})
+                              (Due: ৳{money(entry.dueAmt)})
                             </span>
                           )}
                         </div>
                       ) : (
-                        <span className="font-semibold text-rose-600">বকেয়া: ৳{money(entry.dueAmt)}</span>
+                        <span className="font-semibold text-rose-600">Due: ৳{money(entry.dueAmt)}</span>
                       )}
                     </td>
                     <td className="p-3">
                       {entry.finePaid > 0 ? (
-                        <span className="font-bold text-amber-700">৳{money(entry.finePaid)}</span>
+                        <span className="font-bold text-amber-700">৳ {money(entry.finePaid)}</span>
                       ) : entry.dueFine > 0 ? (
-                        <span className="font-semibold text-rose-600">৳{money(entry.dueFine)}</span>
+                        <span className="font-semibold text-rose-600">৳ {money(entry.dueFine)}</span>
                       ) : (
                         '—'
                       )}
                     </td>
                     <td className="p-3">
                       {isPaidInFull ? (
-                        <span className="inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
-                          পরিশোধিত
+                        <span className="inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-[10.5px] font-bold text-emerald-700 border border-emerald-200">
+                          Paid
                         </span>
                       ) : entry.paid > 0 ? (
-                        <span className="inline-flex rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700">
-                          আংশিক পরিশোধ
+                        <span className="inline-flex rounded-full bg-amber-50 px-2 py-0.5 text-[10.5px] font-bold text-amber-700 border border-amber-200">
+                          Partial
                         </span>
                       ) : (
-                        <span className="inline-flex rounded-full bg-rose-50 px-2 py-0.5 text-[11px] font-bold text-rose-700">
-                          বকেয়া
+                        <span className="inline-flex rounded-full bg-rose-50 px-2 py-0.5 text-[10.5px] font-bold text-rose-700 border border-rose-200">
+                          Unpaid
                         </span>
                       )}
                       {entry.notes.length > 0 && (
@@ -176,7 +176,7 @@ export const StatementModal: React.FC<StatementModalProps> = ({
                                 <button
                                   onClick={() => onEditPayment(p)}
                                   className="rounded p-1 text-slate-500 hover:bg-slate-200 hover:text-slate-800"
-                                  title="এডিট করুন"
+                                  title="Edit"
                                 >
                                   <Edit3 className="h-3.5 w-3.5" />
                                 </button>
@@ -184,7 +184,7 @@ export const StatementModal: React.FC<StatementModalProps> = ({
                                   onClick={() => handleDelete(p.ID)}
                                   disabled={deletingId === p.ID}
                                   className="rounded p-1 text-rose-500 hover:bg-rose-50 hover:text-rose-700"
-                                  title="বাতিল করুন"
+                                  title="Delete"
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
                                 </button>
@@ -196,7 +196,7 @@ export const StatementModal: React.FC<StatementModalProps> = ({
                               className="flex items-center gap-1 rounded-lg bg-teal-50 px-2 py-1 text-[11px] font-bold text-teal-700 hover:bg-teal-100"
                             >
                               <Plus className="h-3 w-3" />
-                              কিস্তি দিন
+                              Pay
                             </button>
                           ) : null}
                         </div>
@@ -216,7 +216,7 @@ export const StatementModal: React.FC<StatementModalProps> = ({
             className="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
           >
             <CreditCard className="h-4 w-4 text-teal-600" />
-            আইডি কার্ড প্রিভিউ
+            View ID Badge
           </button>
 
           <div className="flex gap-2">
@@ -224,7 +224,7 @@ export const StatementModal: React.FC<StatementModalProps> = ({
               onClick={onClose}
               className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition"
             >
-              বন্ধ করুন
+              Close
             </button>
             <button
               onClick={handleDownloadPdf}
@@ -236,7 +236,7 @@ export const StatementModal: React.FC<StatementModalProps> = ({
               ) : (
                 <Download className="h-3.5 w-3.5" />
               )}
-              স্টেটমেন্ট PDF ডাউনলোড
+              Download Statement PDF
             </button>
           </div>
         </div>

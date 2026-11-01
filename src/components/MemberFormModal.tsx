@@ -60,7 +60,7 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('ছবির আকার ৫ মেগাবাইটের বেশি হওয়া যাবে না');
+      alert('Photo file size must be under 5MB');
       return;
     }
 
@@ -87,7 +87,7 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
         canvas.height = height;
         const ctx = canvas.getContext('2d');
         ctx?.drawImage(img, 0, 0, width, height);
-        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
         setPhoto(compressedDataUrl);
       };
       img.src = event.target?.result as string;
@@ -98,17 +98,19 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      alert('সদস্যের নাম দিন');
+      alert('Please enter member name');
       return;
     }
     if (!memberNo.trim()) {
-      alert('সদস্য নম্বর দিন');
+      alert('Please enter Member ID / No');
       return;
     }
 
     setSaving(true);
     try {
       await onSave({
+        // CRITICAL FIX: Preserves existing member ID so edit updates existing record!
+        ID: member ? member.ID : undefined,
         Name: name.trim(),
         MemberNo: memberNo.trim(),
         Mobile: mobile.trim(),
@@ -121,7 +123,7 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
       });
       onClose();
     } catch (err: any) {
-      alert('সংরক্ষণ ব্যর্থ হয়েছে: ' + (err?.message || err));
+      alert('Failed to save member: ' + (err?.message || err));
     } finally {
       setSaving(false);
     }
@@ -131,17 +133,19 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
-      <div className="relative max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl">
+      <div className="relative max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl font-sans">
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
               <UserPlus className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-800">
-                {member ? 'সদস্য তথ্য এডিট করুন' : 'নতুন সদস্য নিবন্ধন'}
+              <h2 className="text-lg font-bold text-slate-800">
+                {member ? 'Edit Member Information' : 'Register New Member'}
               </h2>
-              <p className="text-xs text-slate-500">প্রয়োজনীয় তথ্য পূরণ করে সদস্য কার্ড প্রস্তুত করুন</p>
+              <p className="text-xs text-slate-500">
+                {member ? `Updating details for ${member.Name} (${member.MemberNo})` : 'Fill in the information below to add a member'}
+              </p>
             </div>
           </div>
           <button
@@ -167,16 +171,16 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
                   onClick={() => setPhoto('')}
                   className="absolute bottom-0 inset-x-0 bg-slate-900/70 text-white text-[9px] py-0.5 text-center"
                 >
-                  মুছুন
+                  Remove
                 </button>
               )}
             </div>
             <div className="flex-1">
-              <label className="mb-1 block text-xs font-semibold text-slate-700">সদস্যের পাসপোর্ট সাইজ ছবি</label>
-              <p className="mb-2 text-[11px] text-slate-500">পরিষ্কার মুখের ছবি দিলে আইডি কার্ডটি দেখতে চমৎকার লাগবে</p>
+              <label className="mb-1 block text-xs font-semibold text-slate-700">Member Passport Photo</label>
+              <p className="mb-2 text-[11px] text-slate-500">Square photo recommended for ID card</p>
               <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
                 <Upload className="h-3.5 w-3.5 text-teal-600" />
-                ছবি নির্বাচন করুন
+                Select Photo
                 <input
                   type="file"
                   accept="image/*"
@@ -190,7 +194,7 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
           {/* Member Name & No */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-600">পূর্ণ নাম *</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-700">Full Name *</label>
               <div className="relative">
                 <User className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                 <input
@@ -199,42 +203,43 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full rounded-lg border border-slate-300 pl-9 pr-3.5 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                  placeholder="যেমন: মো: আরিফুল ইসলাম"
+                  placeholder="e.g. John Doe"
                 />
               </div>
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-600">সদস্য নং *</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-700">Member ID / No *</label>
               <input
                 type="text"
                 required
                 value={memberNo}
                 onChange={(e) => setMemberNo(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-mono font-bold focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                placeholder="যেমন: SH-01"
+                className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-semibold focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                placeholder="e.g. SH-01"
               />
             </div>
           </div>
 
-          {/* Mobile & Blood Group */}
+          {/* Mobile (International support) & Blood Group */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-600">মোবাইল নম্বর</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-700">Mobile Number (Any Country Code)</label>
               <div className="relative">
                 <Phone className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                 <input
                   type="tel"
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 pl-9 pr-3.5 py-2 text-sm font-mono focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                  placeholder="01712-345678"
+                  className="w-full rounded-lg border border-slate-300 pl-9 pr-3.5 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                  placeholder="e.g. +880 1712-345678 or +1 555-0199"
                 />
               </div>
+              <p className="mt-1 text-[10.5px] text-slate-400">Include country code (+880, +1, +44, +971, etc.) for WhatsApp</p>
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-600">রক্তের গ্রুপ (ঐচ্ছিক)</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-700">Blood Group (Optional)</label>
               <div className="relative">
                 <HeartPulse className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                 <select
@@ -242,7 +247,7 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
                   onChange={(e) => setBloodGroup(e.target.value)}
                   className="w-full rounded-lg border border-slate-300 pl-9 pr-3.5 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 bg-white"
                 >
-                  <option value="">নির্বাচন করুন</option>
+                  <option value="">Select Blood Group</option>
                   {bloodGroups.map((bg) => (
                     <option key={bg} value={bg}>
                       {bg}
@@ -256,7 +261,7 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
           {/* Financials: Installment, Due Day, Fine */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-600">মাসিক কিস্তি (৳) *</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-700">Monthly Installment (৳) *</label>
               <div className="relative">
                 <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                 <input
@@ -272,7 +277,7 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-600">শেষ তারিখ (দিন) *</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-700">Due Day (1-28) *</label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                 <input
@@ -288,7 +293,7 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-600">বিলম্ব জরিমানা (৳)</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-700">Late Fine (৳)</label>
               <input
                 type="number"
                 min="0"
@@ -303,7 +308,7 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
 
           {/* Join Date */}
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">যোগদানের তারিখ</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-700">Date of Joining / Issue</label>
             <input
               type="date"
               value={joinDate}
@@ -318,14 +323,14 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({
               onClick={onClose}
               className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
             >
-              বাতিল
+              Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
               className="rounded-xl bg-teal-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-teal-600/30 hover:bg-teal-700 transition disabled:opacity-50"
             >
-              {saving ? 'সংরক্ষণ হচ্ছে...' : member ? 'আপডেট করুন' : 'নিবন্ধন সম্পন্ন করুন'}
+              {saving ? 'Saving...' : member ? 'Update Member' : 'Register Member'}
             </button>
           </div>
         </form>

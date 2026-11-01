@@ -49,14 +49,14 @@ export const EditPaymentModal: React.FC<EditPaymentModalProps> = ({
       });
       onClose();
     } catch (err: any) {
-      alert('আপডেট করা যায়নি: ' + (err?.message || err));
+      alert('Failed to update payment: ' + (err?.message || err));
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm font-sans">
       <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3">
@@ -64,8 +64,8 @@ export const EditPaymentModal: React.FC<EditPaymentModalProps> = ({
               <Edit3 className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-800">কিস্তি সংশোধন</h2>
-              <p className="text-xs text-slate-500">জমার তথ্য পরিবর্তন করুন</p>
+              <h2 className="text-base font-bold text-slate-800">Edit Payment Record</h2>
+              <p className="text-xs text-slate-500">Update installment details</p>
             </div>
           </div>
           <button
@@ -78,19 +78,19 @@ export const EditPaymentModal: React.FC<EditPaymentModalProps> = ({
 
         <form onSubmit={handleSubmit} className="mt-5 space-y-4">
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">কিস্তির মাস *</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-700">Installment Month *</label>
             <input
               type="month"
               required
               value={month}
               onChange={(e) => setMonth(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 font-sans"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-600">জমার পরিমাণ (৳) *</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-700">Amount (৳) *</label>
               <div className="relative">
                 <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                 <input
@@ -106,7 +106,7 @@ export const EditPaymentModal: React.FC<EditPaymentModalProps> = ({
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-600">জরিমানা প্রদান (৳)</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-700">Fine Paid (৳)</label>
               <input
                 type="number"
                 min="0"
@@ -119,7 +119,7 @@ export const EditPaymentModal: React.FC<EditPaymentModalProps> = ({
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">জমার তারিখ *</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-700">Payment Date *</label>
             <div className="relative">
               <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
               <input
@@ -133,7 +133,7 @@ export const EditPaymentModal: React.FC<EditPaymentModalProps> = ({
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">মন্তব্য (ঐচ্ছিক)</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-700">Note (Optional)</label>
             <input
               type="text"
               value={note}
@@ -148,14 +148,14 @@ export const EditPaymentModal: React.FC<EditPaymentModalProps> = ({
               onClick={onClose}
               className="rounded-xl border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
             >
-              বাতিল
+              Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
               className="rounded-xl bg-teal-600 px-6 py-2 text-sm font-bold text-white shadow-md shadow-teal-600/30 hover:bg-teal-700 transition disabled:opacity-50"
             >
-              {saving ? 'আপডেট হচ্ছে...' : 'আপডেট করুন'}
+              {saving ? 'Updating...' : 'Save Changes'}
             </button>
           </div>
         </form>
